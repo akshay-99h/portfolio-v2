@@ -1,10 +1,32 @@
 import type { Metadata, Viewport } from "next";
+import { JetBrains_Mono, Newsreader } from "next/font/google";
+import localFont from "next/font/local";
 
-import { SiteAudioController } from "@/components/layout/site-audio-controller";
+import { LenisProvider } from "@/components/providers/lenis-provider";
 import { PageTransitionProvider } from "@/components/providers/page-transition-provider";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 
 import "./globals.css";
+
+const switzer = localFont({
+  src: "../../public/fonts/switzer-variable.woff2",
+  variable: "--font-switzer",
+  weight: "100 900",
+  display: "swap",
+});
+
+const newsreader = Newsreader({
+  subsets: ["latin"],
+  style: ["italic"],
+  variable: "--font-newsreader",
+  display: "swap",
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-jetbrains-mono",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: {
@@ -41,11 +63,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`${switzer.variable} ${newsreader.variable} ${jetbrainsMono.variable}`}
+    >
       <body className="antialiased">
         <ThemeProvider>
-          <PageTransitionProvider>{children}</PageTransitionProvider>
-          <SiteAudioController />
+          <LenisProvider>
+            <PageTransitionProvider>{children}</PageTransitionProvider>
+          </LenisProvider>
         </ThemeProvider>
       </body>
     </html>

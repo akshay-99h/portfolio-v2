@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { usePathname, useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 import * as React from "react";
@@ -246,6 +246,7 @@ function PageTransitionProvider({ children }: PageTransitionProviderProps) {
     mountedRef.current = true;
   }, []);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: pathname is the route-change trigger for the reveal.
   React.useEffect(() => {
     if (!mountedRef.current) {
       return;

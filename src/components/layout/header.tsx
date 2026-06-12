@@ -19,15 +19,50 @@ const NAV_ITEMS = [
 
 function Header() {
   const [isOpen, setIsOpen] = React.useState(false);
+  const [isHidden, setIsHidden] = React.useState(false);
   const pathname = usePathname();
 
+  // Quiet authority: the title block steps aside on scroll-down,
+  // returns immediately on scroll-up.
+  React.useEffect(() => {
+    let lastY = window.scrollY;
+    let ticking = false;
+
+    const onScroll = () => {
+      if (ticking) {
+        return;
+      }
+      ticking = true;
+      window.requestAnimationFrame(() => {
+        const y = window.scrollY;
+        const delta = y - lastY;
+        if (y < 96 || delta < -2) {
+          setIsHidden(false);
+        } else if (delta > 2) {
+          setIsHidden(true);
+        }
+        lastY = y;
+        ticking = false;
+      });
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
-    <header className="sticky top-0 z-50 border-b border-border/80 bg-background px-4 sm:px-6">
-      <div className="mx-auto w-full max-w-[1120px]">
+    <header
+      className={cn(
+        "sticky top-0 z-50 border-b border-border/80 bg-background/95 px-4 backdrop-blur-sm transition-transform duration-300 sm:px-6",
+        isHidden && !isOpen ? "-translate-y-full" : "translate-y-0",
+      )}
+      style={{ transitionTimingFunction: "var(--ease-out-strong)" }}
+    >
+      <div className="mx-auto w-full max-w-[1320px]">
         <div className="flex items-center justify-between gap-4 py-3.5">
           <BrandWordmark className="text-[1.65rem] sm:text-[1.85rem]" />
 
-          <nav className="hidden items-center gap-6 md:flex">
+          <nav className="hidden items-center gap-7 md:flex">
             {NAV_ITEMS.map((item) => {
               const isActive = pathname === item.href;
 
@@ -36,10 +71,10 @@ function Header() {
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    "relative px-1 py-2 text-sm transition-colors after:absolute after:inset-x-1 after:-bottom-0.5 after:h-px after:origin-left after:scale-x-0 after:bg-foreground after:transition-transform",
+                    "dim-label relative py-2 transition-colors after:absolute after:inset-x-0 after:bottom-0 after:h-px after:origin-left after:scale-x-0 after:bg-foreground after:transition-transform",
                     isActive
                       ? "text-foreground after:scale-x-100"
-                      : "text-foreground/72 hover:text-foreground hover:after:scale-x-50",
+                      : "text-muted-foreground hover:text-foreground hover:after:scale-x-50",
                   )}
                 >
                   {item.label}
@@ -48,7 +83,14 @@ function Header() {
             })}
           </nav>
 
-          <div className="hidden items-center gap-2 md:flex">
+          <div className="hidden items-center gap-4 md:flex">
+            <span className="dim-label hidden items-center gap-2 lg:flex">
+              <span
+                aria-hidden="true"
+                className="size-1.5 rounded-full bg-signal"
+              />
+              Available
+            </span>
             <ThemeToggle />
             <Button asChild size="sm" className="px-4">
               <Link href="/contact">Contact</Link>
@@ -67,15 +109,15 @@ function Header() {
         </div>
 
         {isOpen ? (
-          <div className="border-t border-border pb-3 md:hidden">
-            <div className="flex flex-col gap-1 pt-3">
+          <div className="border-t border-border pb-4 md:hidden">
+            <div className="flex flex-col pt-2">
               {NAV_ITEMS.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
                   onClick={() => setIsOpen(false)}
                   className={cn(
-                    "px-1 py-2 text-sm transition-colors",
+                    "border-b border-border/60 py-3 text-lg tracking-tight transition-colors",
                     pathname === item.href
                       ? "text-foreground"
                       : "text-foreground/75 hover:text-foreground",
@@ -85,7 +127,7 @@ function Header() {
                 </Link>
               ))}
             </div>
-            <div className="mt-3 flex items-center gap-2">
+            <div className="mt-4 flex items-center gap-2">
               <ThemeToggle />
               <Button asChild className="w-full px-4">
                 <Link href="/contact" onClick={() => setIsOpen(false)}>
