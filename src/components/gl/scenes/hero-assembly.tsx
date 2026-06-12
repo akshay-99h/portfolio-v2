@@ -6,6 +6,7 @@ import * as React from "react";
 import * as THREE from "three";
 
 import { SceneCanvas } from "@/components/gl/scene-canvas";
+import { ContourTerrain } from "@/components/gl/scenes/contour-terrain";
 
 /**
  * Shared mutable drivers. The DOM section writes targets (scroll progress,
@@ -440,6 +441,8 @@ function HeroAssemblyCanvas({ drivers, tone }: HeroAssemblyProps) {
   return (
     <SceneCanvas className="h-full w-full" fov={32} cameraZ={8.5}>
       <KickBridge drivers={drivers} />
+      {/* The living survey sheet — breathes behind the whole page. */}
+      <ContourTerrain drivers={drivers} tone={tone} />
       <HeroAssemblyObject drivers={drivers} tone={tone} />
     </SceneCanvas>
   );
