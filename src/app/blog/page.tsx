@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 
 import { BlogCard } from "@/components/blog/blog-card";
@@ -5,6 +6,20 @@ import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
 import { SectionContainer } from "@/components/layout/section-container";
 import { getAllPosts } from "@/lib/blog/posts";
+
+const DESCRIPTION =
+  "Notes from the agency side of building software — product delivery, architecture decisions, and the engineering tradeoffs that come up in client work.";
+
+export const metadata: Metadata = {
+  title: "Writing",
+  description: DESCRIPTION,
+  alternates: { canonical: "/blog" },
+  openGraph: {
+    title: "Writing — Akxost Studio",
+    description: DESCRIPTION,
+    url: "/blog",
+  },
+};
 
 export default function BlogPage() {
   const posts = getAllPosts();

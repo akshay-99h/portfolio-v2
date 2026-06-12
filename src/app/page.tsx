@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 
 import { Footer } from "@/components/layout/footer";
@@ -8,6 +9,10 @@ import { MethodSection } from "@/components/sections/method-section";
 import { WorkIndexSection } from "@/components/sections/work-index-section";
 import { Button } from "@/components/ui/button";
 import { BASICS } from "@/lib/data/resume";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 
 const BRIEF_PROMPTS = [
   "The product that needs to exist",

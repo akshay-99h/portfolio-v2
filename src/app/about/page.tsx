@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 
 import { Footer } from "@/components/layout/footer";
@@ -10,6 +11,20 @@ import {
   INTERESTS,
   PORTFOLIO_META,
 } from "@/lib/data/resume";
+
+const DESCRIPTION =
+  "Akxost Studio is a small product engineering agency in New Delhi built around direct execution — discovery, architecture, implementation, deployment, and post-launch iteration from one desk.";
+
+export const metadata: Metadata = {
+  title: "Agency",
+  description: DESCRIPTION,
+  alternates: { canonical: "/about" },
+  openGraph: {
+    title: "The agency — Akxost Studio",
+    description: DESCRIPTION,
+    url: "/about",
+  },
+};
 
 export default function AboutPage() {
   return (

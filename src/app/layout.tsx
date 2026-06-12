@@ -5,6 +5,8 @@ import localFont from "next/font/local";
 import { LenisProvider } from "@/components/providers/lenis-provider";
 import { PageTransitionProvider } from "@/components/providers/page-transition-provider";
 import { ThemeProvider } from "@/components/providers/theme-provider";
+import { BASICS } from "@/lib/data/resume";
+import { SITE_DESCRIPTION, SITE_NAME, SITE_TITLE, SITE_URL } from "@/lib/seo";
 
 import "./globals.css";
 
@@ -29,25 +31,97 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: "Akxost Studio",
-    template: "%s | Akxost Studio",
+    default: SITE_TITLE,
+    template: `%s — ${SITE_NAME}`,
   },
-  description:
-    "Akxost Studio is a product engineering agency delivering strategy, full-stack web and mobile builds, backend systems, and launch support.",
-  metadataBase: new URL("https://akxost.com"),
+  description: SITE_DESCRIPTION,
+  applicationName: SITE_NAME,
+  authors: [{ name: BASICS.name, url: `${SITE_URL}/about` }],
+  creator: BASICS.name,
+  publisher: SITE_NAME,
+  category: "technology",
+  keywords: [
+    "product engineering agency",
+    "full-stack development agency",
+    "Next.js development",
+    "React development agency",
+    "mobile app development",
+    "backend systems",
+    "MVP development",
+    "fractional product engineering",
+    "software agency New Delhi",
+    "Akxost",
+  ],
   openGraph: {
-    title: "Akxost Studio",
-    description:
-      "Product engineering agency for web, mobile, backend systems, and launch support.",
     type: "website",
+    url: SITE_URL,
+    siteName: SITE_NAME,
+    locale: "en_US",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
   },
   twitter: {
     card: "summary_large_image",
-    title: "Akxost Studio",
-    description:
-      "Product engineering agency for web, mobile, backend systems, and launch support.",
+    site: "@akshay_99h",
+    creator: "@akshay_99h",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
   },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
+};
+
+/** Organization + WebSite graph for rich results. */
+const ORGANIZATION_JSON_LD = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": `${SITE_URL}/#organization`,
+      name: SITE_NAME,
+      url: SITE_URL,
+      description: SITE_DESCRIPTION,
+      email: BASICS.contact.email,
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: "New Delhi",
+        addressCountry: "IN",
+      },
+      founder: {
+        "@type": "Person",
+        name: BASICS.name,
+        jobTitle: BASICS.title,
+        sameAs: [
+          BASICS.contact.github,
+          BASICS.contact.linkedin,
+          BASICS.contact.twitter,
+        ],
+      },
+      sameAs: [
+        BASICS.contact.github,
+        BASICS.contact.linkedin,
+        BASICS.contact.twitter,
+      ],
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${SITE_URL}/#website`,
+      url: SITE_URL,
+      name: SITE_NAME,
+      publisher: { "@id": `${SITE_URL}/#organization` },
+    },
+  ],
 };
 
 export const viewport: Viewport = {
@@ -69,6 +143,13 @@ export default function RootLayout({
       className={`${switzer.variable} ${newsreader.variable} ${jetbrainsMono.variable}`}
     >
       <body className="antialiased">
+        <script
+          type="application/ld+json"
+          // biome-ignore lint/security/noDangerouslySetInnerHtml: static JSON-LD built from local data
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(ORGANIZATION_JSON_LD),
+          }}
+        />
         <ThemeProvider>
           <LenisProvider>
             <PageTransitionProvider>{children}</PageTransitionProvider>
