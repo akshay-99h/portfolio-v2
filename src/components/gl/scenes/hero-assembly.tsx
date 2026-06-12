@@ -116,11 +116,13 @@ const PALETTES: Record<
     signal: string;
     edge: string;
     edgeOpacity: number;
-    /** Surface finish — dark mode runs glossier so modules catch light
-     *  and separate from the near-black page background. */
+    /** Surface finish — glossy so modules catch light and read as
+     *  distinct faces against the page background. */
     clayRoughness: number;
     clayMetalness: number;
     signalRoughness: number;
+    /** Rim-fill light tint. */
+    rim: string;
   }
 > = {
   light: {
@@ -128,9 +130,10 @@ const PALETTES: Record<
     signal: "#2aa49d",
     edge: "#131310",
     edgeOpacity: 0.5,
-    clayRoughness: 0.9,
-    clayMetalness: 0.02,
-    signalRoughness: 0.55,
+    clayRoughness: 0.4,
+    clayMetalness: 0.3,
+    signalRoughness: 0.32,
+    rim: "#fdf4e0",
   },
   dark: {
     clay: ["#3a3f38", "#30352f", "#474c44"],
@@ -140,6 +143,7 @@ const PALETTES: Record<
     clayRoughness: 0.38,
     clayMetalness: 0.45,
     signalRoughness: 0.3,
+    rim: "#bfeae6",
   },
 };
 
@@ -359,15 +363,12 @@ function HeroAssemblyObject({ drivers, tone }: HeroAssemblyProps) {
         intensity={tone === "dark" ? 1.5 : 1.1}
       />
       <directionalLight position={[-5, 2, -2]} intensity={0.35} />
-      {tone === "dark" ? (
-        // Cool rim fill so glossy faces pick up a sheen against the
-        // near-black page background.
-        <directionalLight
-          position={[-3, 4, 5]}
-          intensity={0.7}
-          color="#bfeae6"
-        />
-      ) : null}
+      {/* Rim fill so glossy faces pick up a sheen against the page. */}
+      <directionalLight
+        position={[-3, 4, 5]}
+        intensity={tone === "dark" ? 0.7 : 0.55}
+        color={palette.rim}
+      />
 
       <group ref={rigRef}>
         {/* The drawing envelope the object assembles into. */}
