@@ -26,13 +26,13 @@ function Footer() {
               className="text-[2.4rem] sm:text-[3.2rem]"
             />
             <h2 className="display-section max-w-xl">
-              Product work kept disciplined enough to ship, hand off, and keep
+              Product work disciplined enough to ship, hand off, and keep
               growing.
             </h2>
             <p className="section-copy max-w-md text-sm sm:text-base">
               Akxost Studio builds web and mobile systems with clear
-              architecture, restrained scope, and delivery that does not get
-              harder to maintain after launch.
+              architecture, restrained scope, and delivery that stays
+              maintainable long after launch.
             </p>
           </section>
 

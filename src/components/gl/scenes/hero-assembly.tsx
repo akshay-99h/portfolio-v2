@@ -1,6 +1,6 @@
 "use client";
 
-import { ContactShadows, RoundedBox } from "@react-three/drei";
+import { RoundedBox } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 import * as React from "react";
 import * as THREE from "three";
@@ -20,6 +20,8 @@ type AssemblyDrivers = {
   /** Normalized pointer, -1..1. */
   pointerX: number;
   pointerY: number;
+  /** Document scroll progress, 0..1 — drives the object's tour of the page. */
+  scroll: number;
   /** Registered by the scene on mount; lets DOM code request a frame. */
   kick?: () => void;
 };
@@ -31,80 +33,81 @@ type HeroAssemblyProps = {
   tone: Tone;
 };
 
-/** Voxel grid: half the cell pitch on each axis. */
-const HALF = 0.53;
-const CUBE_SIZE = 0.96;
+/** Voxel grid: 3 modules per axis. */
+const GRID = 3;
+/** Center-to-center module pitch. */
+const PITCH = 0.66;
+const CUBE_SIZE = 0.58;
+/** Overall object extent along one axis. */
+const EXTENT = PITCH * (GRID - 1) + CUBE_SIZE;
 /** Drawing envelope — the outline the object assembles into. */
-const ENVELOPE = HALF * 2 + CUBE_SIZE + 0.16;
+const ENVELOPE = EXTENT + 0.18;
+
+/** Deterministic per-module noise so the exploded state reads as composed. */
+function hash(n: number) {
+  const x = Math.sin(n * 127.1 + 311.7) * 43758.5453;
+  return x - Math.floor(x);
+}
+
+function signed(n: number) {
+  return hash(n) * 2 - 1;
+}
 
 type VoxelConfig = {
   id: string;
   /** Seated position inside the brand cube. */
   seat: [number, number, number];
-  /** Hand-placed drift so the exploded state reads as a composition. */
+  /** Per-module drift so the exploded state reads as a composition. */
   drift: [number, number, number];
   /** Scatter rotation at the exploded state (radians). */
   scatter: [number, number, number];
 };
 
 /**
- * The brand cube, cut into eight modules. Ordered bottom-up so the
+ * The brand cube, cut into twenty-seven modules. Ordered bottom-up so the
  * assembly reads like a build: foundation first, signal corner last.
  */
-const VOXELS: VoxelConfig[] = [
-  {
-    id: "base-sw",
-    seat: [-HALF, -HALF, HALF],
-    drift: [-0.55, -0.1, 0.35],
-    scatter: [0.45, 0.5, -0.2],
-  },
-  {
-    id: "base-se",
-    seat: [HALF, -HALF, HALF],
-    drift: [0.4, -0.25, 0.55],
-    scatter: [-0.3, -0.45, 0.35],
-  },
-  {
-    id: "base-nw",
-    seat: [-HALF, -HALF, -HALF],
-    drift: [-0.7, 0.05, -0.3],
-    scatter: [0.25, -0.6, 0.4],
-  },
-  {
-    id: "base-ne",
-    seat: [HALF, -HALF, -HALF],
-    drift: [0.6, -0.05, -0.5],
-    scatter: [-0.5, 0.3, -0.35],
-  },
-  {
-    id: "top-sw",
-    seat: [-HALF, HALF, HALF],
-    drift: [-0.45, 0.45, 0.6],
-    scatter: [0.55, -0.35, 0.5],
-  },
-  {
-    id: "top-nw",
-    seat: [-HALF, HALF, -HALF],
-    drift: [-0.6, 0.6, -0.45],
-    scatter: [-0.4, 0.55, 0.25],
-  },
-  {
-    id: "top-ne",
-    seat: [HALF, HALF, -HALF],
-    drift: [0.5, 0.35, -0.6],
-    scatter: [0.35, 0.4, -0.55],
-  },
+const VOXELS: VoxelConfig[] = (() => {
+  const cells: VoxelConfig[] = [];
+  let n = 0;
+  for (let y = 0; y < GRID; y++) {
+    for (let z = 0; z < GRID; z++) {
+      for (let x = 0; x < GRID; x++) {
+        const seed = n * 7.13;
+        cells.push({
+          id: `m-${x}${y}${z}`,
+          seat: [(x - 1) * PITCH, (y - 1) * PITCH, (z - 1) * PITCH],
+          drift: [
+            signed(seed + 1) * 0.6,
+            signed(seed + 2) * 0.35,
+            signed(seed + 3) * 0.6,
+          ],
+          scatter: [
+            signed(seed + 4) * 0.6,
+            signed(seed + 5) * 0.6,
+            signed(seed + 6) * 0.6,
+          ],
+        });
+        n++;
+      }
+    }
+  }
+
   // The signal corner — lands last, like the keystone.
-  {
-    id: "signal",
-    seat: [HALF, HALF, HALF],
-    drift: [0.75, 0.75, 0.5],
-    scatter: [-0.6, -0.5, 0.45],
-  },
-];
+  const signalIndex = cells.findIndex((cell) => cell.id === "m-222");
+  const [signal] = cells.splice(signalIndex, 1);
+  cells.push({ ...signal, id: "signal" });
+  return cells;
+})();
+
+/** Per-module timing inside the assembly scrub. */
+const ASSEMBLE_STAGGER = 0.014;
+const ASSEMBLE_WINDOW = 0.6;
+const BORN_STAGGER = 0.018;
+const BORN_WINDOW = 0.45;
 
 /** How far the exploded layout spreads, per axis (y kept tight for the floor). */
-const SPREAD: [number, number, number] = [2.35, 1.45, 2.35];
+const SPREAD: [number, number, number] = [2.1, 1.5, 2.1];
 
 const PALETTES: Record<
   Tone,
@@ -113,7 +116,6 @@ const PALETTES: Record<
     signal: string;
     edge: string;
     edgeOpacity: number;
-    shadow: string;
   }
 > = {
   light: {
@@ -121,14 +123,12 @@ const PALETTES: Record<
     signal: "#2aa49d",
     edge: "#131310",
     edgeOpacity: 0.5,
-    shadow: "#3a382f",
   },
   dark: {
     clay: ["#232722", "#1b1f1b", "#2a2e29"],
     signal: "#2dbab4",
     edge: "#e8e5de",
     edgeOpacity: 0.65,
-    shadow: "#000000",
   },
 };
 
@@ -136,12 +136,57 @@ const PALETTES: Record<
 const ISO_X = Math.atan(1 / Math.SQRT2);
 const ISO_Y = Math.PI / 4;
 
+/**
+ * The object's tour of the page, keyed by document scroll progress.
+ * x/y are in "safe range" units: -1..1 of the viewport minus the object's
+ * own footprint, so the object can never crop at an edge.
+ */
+type Waypoint = { at: number; x: number; y: number; s: number };
+
+const TRAVEL_LANDSCAPE: Waypoint[] = [
+  { at: 0.0, x: 0.92, y: 0.05, s: 1 }, // hero — seated in the right column
+  { at: 0.28, x: 0.92, y: 0.05, s: 1 }, // holds through the pinned assembly
+  { at: 0.45, x: -0.85, y: -0.18, s: 0.62 }, // method — crosses to the left rail
+  { at: 0.62, x: 0.88, y: 0.15, s: 0.55 }, // work index — back right
+  { at: 0.8, x: -0.85, y: 0.0, s: 0.55 }, // field notes — left again
+  { at: 1.0, x: 0.0, y: -0.25, s: 0.7 }, // brief/footer — settles center
+];
+
+const TRAVEL_PORTRAIT: Waypoint[] = [
+  { at: 0.0, x: 0.0, y: -0.45, s: 0.8 },
+  { at: 0.28, x: -0.7, y: 0.1, s: 0.5 },
+  { at: 0.52, x: 0.7, y: 0.1, s: 0.45 },
+  { at: 0.78, x: -0.7, y: 0.05, s: 0.45 },
+  { at: 1.0, x: 0.0, y: -0.3, s: 0.55 },
+];
+
 function easeInOutCubic(t: number) {
   return t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2;
 }
 
 function clamp01(value: number) {
   return Math.min(1, Math.max(0, value));
+}
+
+function sampleTravel(points: Waypoint[], progress: number) {
+  const t = clamp01(progress);
+  let from = points[0];
+  let to = points[points.length - 1];
+  for (let i = 0; i < points.length - 1; i++) {
+    if (t >= points[i].at && t <= points[i + 1].at) {
+      from = points[i];
+      to = points[i + 1];
+      break;
+    }
+  }
+  const span = to.at - from.at;
+  const k =
+    span > 0 ? THREE.MathUtils.smoothstep((t - from.at) / span, 0, 1) : 1;
+  return {
+    x: THREE.MathUtils.lerp(from.x, to.x, k),
+    y: THREE.MathUtils.lerp(from.y, to.y, k),
+    s: THREE.MathUtils.lerp(from.s, to.s, k),
+  };
 }
 
 function HeroAssemblyObject({ drivers, tone }: HeroAssemblyProps) {
@@ -153,7 +198,13 @@ function HeroAssemblyObject({ drivers, tone }: HeroAssemblyProps) {
   const edgeMat = React.useRef<THREE.LineBasicMaterial>(null);
 
   // Damped simulation state (targets live in `drivers`).
-  const sim = React.useRef({ progress: 0, intro: 0, pointerX: 0, pointerY: 0 });
+  const sim = React.useRef({
+    progress: 0,
+    intro: 0,
+    pointerX: 0,
+    pointerY: 0,
+    scroll: 0,
+  });
 
   // Envelope wireframe: build once, dispose on unmount.
   const envelopeGeom = React.useMemo(() => {
@@ -173,7 +224,13 @@ function HeroAssemblyObject({ drivers, tone }: HeroAssemblyProps) {
     const dt = Math.min(delta, 1 / 30);
 
     let settling = false;
-    const keys = ["progress", "intro", "pointerX", "pointerY"] as const;
+    const keys = [
+      "progress",
+      "intro",
+      "pointerX",
+      "pointerY",
+      "scroll",
+    ] as const;
     for (const key of keys) {
       const lambda = key === "pointerX" || key === "pointerY" ? 5 : 9;
       const next = THREE.MathUtils.damp(s[key], target[key], lambda, dt);
@@ -191,14 +248,32 @@ function HeroAssemblyObject({ drivers, tone }: HeroAssemblyProps) {
 
     const rig = rigRef.current;
     if (rig) {
+      // The whole viewport is the playground: the object walks a waypoint
+      // path keyed to document scroll, clamped so it can never crop.
+      const { viewport } = state;
+      const route =
+        viewport.width >= viewport.height ? TRAVEL_LANDSCAPE : TRAVEL_PORTRAIT;
+      const travel = sampleTravel(route, s.scroll);
+      const footprint = ENVELOPE * 0.78 * travel.s;
+      const safeX = Math.max(0, viewport.width / 2 - footprint);
+      const safeY = Math.max(0, viewport.height / 2 - footprint);
+
+      // Slow tour rotation once the hero assembly has finished.
+      const tour = THREE.MathUtils.smoothstep(s.scroll, 0.28, 1);
+
       // Flat "drawing" angle → the logotype's isometric angle.
       rig.rotation.x =
-        THREE.MathUtils.lerp(0.24, ISO_X, rotT) + s.pointerY * -0.06;
+        THREE.MathUtils.lerp(0.24, ISO_X, rotT) +
+        s.pointerY * -0.06 +
+        tour * 0.12;
       rig.rotation.y =
-        THREE.MathUtils.lerp(-0.62, ISO_Y, rotT) + s.pointerX * 0.09;
-      rig.position.x = s.pointerX * 0.1;
-      rig.position.y = THREE.MathUtils.lerp(-0.08, 0.08, assembleBase);
-      rig.scale.setScalar(0.9 + 0.1 * intro);
+        THREE.MathUtils.lerp(-0.62, ISO_Y, rotT) +
+        s.pointerX * 0.09 +
+        tour * Math.PI * 0.75;
+      rig.position.x = travel.x * safeX + s.pointerX * 0.1;
+      rig.position.y =
+        travel.y * safeY + THREE.MathUtils.lerp(-0.08, 0.08, assembleBase);
+      rig.scale.setScalar((0.9 + 0.1 * intro) * travel.s);
     }
 
     VOXELS.forEach((voxel, i) => {
@@ -208,12 +283,14 @@ function HeroAssemblyObject({ drivers, tone }: HeroAssemblyProps) {
       }
 
       // Each module gets its own assembly window — foundation first.
-      const t = easeInOutCubic(clamp01((assembleBase - i * 0.045) / 0.68));
+      const t = easeInOutCubic(
+        clamp01((assembleBase - i * ASSEMBLE_STAGGER) / ASSEMBLE_WINDOW),
+      );
       // ...and its own entrance beat.
       const born = THREE.MathUtils.smoothstep(
         intro,
-        i * 0.055,
-        i * 0.055 + 0.5,
+        i * BORN_STAGGER,
+        i * BORN_STAGGER + BORN_WINDOW,
       );
 
       group.position.set(
@@ -292,8 +369,8 @@ function HeroAssemblyObject({ drivers, tone }: HeroAssemblyProps) {
           >
             <RoundedBox
               args={[CUBE_SIZE, CUBE_SIZE, CUBE_SIZE]}
-              radius={0.07}
-              smoothness={4}
+              radius={0.045}
+              smoothness={8}
             >
               <meshStandardMaterial
                 ref={registerSolid}
@@ -311,16 +388,6 @@ function HeroAssemblyObject({ drivers, tone }: HeroAssemblyProps) {
           </group>
         ))}
       </group>
-
-      <ContactShadows
-        position={[0, -1.45, 0]}
-        opacity={0.35}
-        scale={8}
-        blur={2.6}
-        far={2.8}
-        resolution={256}
-        color={palette.shadow}
-      />
     </>
   );
 }

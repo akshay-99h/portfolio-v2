@@ -31,7 +31,7 @@ const ANNOTATIONS = [
   { id: "A.02", label: "Drawing envelope", className: "left-0 top-[46%]" },
   {
     id: "A.03",
-    label: "Modules ×8",
+    label: "Modules ×27",
     className: "right-4 bottom-[14%] text-right",
   },
 ] as const;
@@ -141,7 +141,28 @@ function HeroAssemblySection() {
     intro: 0,
     pointerX: 0,
     pointerY: 0,
+    scroll: 0,
   });
+
+  // Document scroll progress drives the object's tour of the whole page.
+  React.useEffect(() => {
+    const drivers = driversRef.current;
+
+    const updateScroll = () => {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      drivers.scroll =
+        max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+      drivers.kick?.();
+    };
+
+    updateScroll();
+    window.addEventListener("scroll", updateScroll, { passive: true });
+    window.addEventListener("resize", updateScroll);
+    return () => {
+      window.removeEventListener("scroll", updateScroll);
+      window.removeEventListener("resize", updateScroll);
+    };
+  }, []);
 
   React.useLayoutEffect(() => {
     const section = sectionRef.current;
@@ -159,6 +180,7 @@ function HeroAssemblySection() {
     mm.add(
       {
         isDesktop: "(min-width: 1024px)",
+        isMobile: "(max-width: 1023.98px)",
         reduce: "(prefers-reduced-motion: reduce)",
       },
       (context) => {
@@ -269,6 +291,8 @@ function HeroAssemblySection() {
         }
 
         // --- Material response: damped tilt, clamped, decays to rest.
+        // Window-level: the object roams the whole page, so it should
+        // respond to the pointer wherever it currently sits.
         const handlePointerMove = (event: PointerEvent) => {
           drivers.pointerX = (event.clientX / window.innerWidth) * 2 - 1;
           drivers.pointerY = (event.clientY / window.innerHeight) * 2 - 1;
@@ -280,14 +304,20 @@ function HeroAssemblySection() {
           kick();
         };
 
-        section.addEventListener("pointermove", handlePointerMove, {
+        window.addEventListener("pointermove", handlePointerMove, {
           passive: true,
         });
-        section.addEventListener("pointerleave", handlePointerLeave);
+        document.documentElement.addEventListener(
+          "pointerleave",
+          handlePointerLeave,
+        );
 
         return () => {
-          section.removeEventListener("pointermove", handlePointerMove);
-          section.removeEventListener("pointerleave", handlePointerLeave);
+          window.removeEventListener("pointermove", handlePointerMove);
+          document.documentElement.removeEventListener(
+            "pointerleave",
+            handlePointerLeave,
+          );
         };
       },
     );
@@ -296,135 +326,151 @@ function HeroAssemblySection() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="relative px-4 pt-5 sm:px-6 sm:pt-6">
-      {/* The sheet. Everything in the hero lives on one technical drawing. */}
-      <div className="relative mx-auto w-full max-w-[1320px] border border-border/70">
-        <CropMarks />
-
-        {/* Sheet header strip */}
-        <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-border/70 px-4 py-3 sm:px-6">
-          <p data-hero-fade className="section-kicker">
-            Product Engineering Studio
-          </p>
-          <p data-hero-fade className="dim-label hidden md:block">
-            28.6139° N — 77.2090° E
-          </p>
-          <p data-hero-fade className="dim-label">
-            Sheet 01 / 04
-          </p>
-        </div>
-
-        {/* Drawing area: type column left, object column right — no overlap. */}
-        <div className="grid gap-x-12 gap-y-8 px-4 pt-12 pb-9 sm:px-6 lg:grid-cols-[minmax(0,1.04fr)_minmax(0,0.96fr)] lg:pt-16 lg:pb-10">
-          <div>
-            {/* Headline: staircase composition — type steps like the modules. */}
-            <h1 className="display-hero text-foreground">
-              <span className="line-mask">
-                <span data-hero-line>We build</span>
-              </span>
-              <span className="line-mask lg:pl-[7%]">
-                <span data-hero-line>products that</span>
-              </span>
-              <span className="line-mask lg:pl-[14%]">
-                <span data-hero-line>
-                  <em>survive</em> contact
-                </span>
-              </span>
-              <span className="line-mask lg:pl-[5%]">
-                <span data-hero-line>
-                  with reality
-                  <span className="text-[color:var(--signal)]">.</span>
-                </span>
-              </span>
-            </h1>
-
-            {/* Measurement ruler under the type. */}
-            <div
-              data-hero-rule
-              className="ruler-x mt-10 origin-left lg:mt-12 lg:max-w-[88%]"
-            />
-
-            <p
-              data-hero-fade
-              className="section-copy mt-9 max-w-md text-base sm:text-lg"
-            >
-              Strategy, build, systems, and launch support. One senior team
-              carries the product from first drawing to dependable release.
-            </p>
-            <div
-              data-hero-fade
-              className="mt-7 flex flex-wrap items-center gap-6"
-            >
-              <Button asChild size="lg" className="px-7">
-                <Link href="/contact">Start a project</Link>
-              </Button>
-              <Link
-                href="/projects"
-                className="dim-label text-foreground/80 transition-colors hover:text-foreground"
-              >
-                Recent work →
-              </Link>
-            </div>
-          </div>
-
-          {/* The object: its own column, full height of the type beside it. */}
-          <div
-            ref={viewportRef}
-            className="pointer-events-none relative h-[42svh] min-h-[280px] lg:h-full lg:min-h-[480px]"
-          >
-            <HeroAssemblyCanvas drivers={driversRef} tone={tone} />
-
-            <div data-hero-labels className="absolute inset-0 hidden lg:block">
-              {ANNOTATIONS.map((annotation) => (
-                <div
-                  key={annotation.id}
-                  className={`absolute ${annotation.className}`}
-                >
-                  <span className="dim-label">
-                    {annotation.id} — {annotation.label}
-                  </span>
-                  <div className="rule-x mt-1.5 w-12" />
-                </div>
-              ))}
-            </div>
-
-            <div className="absolute inset-x-0 bottom-1 flex justify-center">
-              <p data-hero-caption className="dim-label whitespace-nowrap">
-                Eight modules, one object — drawn, then built
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Bottom row: stamp and title block. */}
-        <div className="flex flex-wrap items-end justify-between gap-10 px-4 pb-9 sm:px-6 lg:pb-10">
-          <div data-hero-fade className="hidden lg:block">
-            <RegistrationStamp className="size-[6.5rem]" />
-          </div>
-
-          <TitleBlock />
-        </div>
-
-        {/* Sheet footer strip */}
-        <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-t border-border/70 px-4 py-3 sm:px-6">
-          <span data-hero-fade className="dim-label">
-            Senior-led delivery
-          </span>
-          <span
-            data-hero-cue
-            className="dim-label hidden lg:inline-flex lg:items-baseline lg:gap-2"
-          >
-            Scroll — the drawing assembles
-            <span aria-hidden="true" className="cue-bob">
-              ↓
-            </span>
-          </span>
-          <span data-hero-fade className="dim-label hidden sm:inline">
-            New builds / Rebuilds / Systems
-          </span>
-        </div>
+    <>
+      {/* The object's playground is the whole viewport: a fixed canvas that
+          sits behind every section. It starts seated in the hero's right
+          column, then tours the page as the document scrolls. Kept outside
+          the section so the ScrollTrigger pin never affects it. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none fixed inset-0 -z-10"
+      >
+        <HeroAssemblyCanvas drivers={driversRef} tone={tone} />
       </div>
-    </section>
+
+      <section ref={sectionRef} className="relative px-4 pt-5 sm:px-6 sm:pt-6">
+        {/* The sheet. Everything in the hero lives on one technical drawing. */}
+        <div className="relative mx-auto w-full max-w-[1320px] border border-border/70">
+          <CropMarks />
+
+          {/* Sheet header strip */}
+          <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-border/70 px-4 py-3 sm:px-6">
+            <p data-hero-fade className="section-kicker">
+              Product Engineering Studio
+            </p>
+            <p data-hero-fade className="dim-label hidden md:block">
+              28.6139° N — 77.2090° E
+            </p>
+            <p data-hero-fade className="dim-label">
+              Sheet 01 / 04
+            </p>
+          </div>
+
+          {/* Drawing area: type column left, object column right — no overlap. */}
+          <div className="grid gap-x-12 gap-y-8 px-4 pt-12 pb-9 sm:px-6 lg:grid-cols-[minmax(0,1.04fr)_minmax(0,0.96fr)] lg:pt-16 lg:pb-10">
+            <div>
+              {/* Headline: staircase composition — type steps like the modules. */}
+              <h1 className="display-hero text-foreground">
+                <span className="line-mask">
+                  <span data-hero-line>We build</span>
+                </span>
+                <span className="line-mask lg:pl-[7%]">
+                  <span data-hero-line>products that</span>
+                </span>
+                <span className="line-mask lg:pl-[14%]">
+                  <span data-hero-line>
+                    <em>survive</em> contact
+                  </span>
+                </span>
+                <span className="line-mask lg:pl-[5%]">
+                  <span data-hero-line>
+                    with reality
+                    <span className="text-[color:var(--signal)]">.</span>
+                  </span>
+                </span>
+              </h1>
+
+              {/* Measurement ruler under the type. */}
+              <div
+                data-hero-rule
+                className="ruler-x mt-10 origin-left lg:mt-12 lg:max-w-[88%]"
+              />
+
+              <p
+                data-hero-fade
+                className="section-copy mt-9 max-w-md text-base sm:text-lg"
+              >
+                Strategy, design, engineering, and launch support. One senior
+                team carries the product from first drawing to dependable
+                release.
+              </p>
+              <div
+                data-hero-fade
+                className="mt-7 flex flex-wrap items-center gap-6"
+              >
+                <Button asChild size="lg" className="px-7">
+                  <Link href="/contact">Start a project</Link>
+                </Button>
+                <Link
+                  href="/projects"
+                  className="dim-label text-foreground/80 transition-colors hover:text-foreground"
+                >
+                  Recent work →
+                </Link>
+              </div>
+            </div>
+
+            {/* The object's home column: reserves the hero space it starts in
+              and carries the annotations that point at it. */}
+            <div
+              ref={viewportRef}
+              className="pointer-events-none relative h-[42svh] min-h-[280px] lg:h-full lg:min-h-[480px]"
+            >
+              <div
+                data-hero-labels
+                className="absolute inset-0 hidden lg:block"
+              >
+                {ANNOTATIONS.map((annotation) => (
+                  <div
+                    key={annotation.id}
+                    className={`absolute ${annotation.className}`}
+                  >
+                    <span className="dim-label">
+                      {annotation.id} — {annotation.label}
+                    </span>
+                    <div className="rule-x mt-1.5 w-12" />
+                  </div>
+                ))}
+              </div>
+
+              <div className="absolute inset-x-0 bottom-1 flex justify-center">
+                <p data-hero-caption className="dim-label whitespace-nowrap">
+                  Twenty-seven modules, one object — drawn, then built
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom row: stamp and title block. */}
+          <div className="flex flex-wrap items-end justify-between gap-10 px-4 pb-9 sm:px-6 lg:pb-10">
+            <div data-hero-fade className="hidden lg:block">
+              <RegistrationStamp className="size-[6.5rem]" />
+            </div>
+
+            <TitleBlock />
+          </div>
+
+          {/* Sheet footer strip */}
+          <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-t border-border/70 px-4 py-3 sm:px-6">
+            <span data-hero-fade className="dim-label">
+              Senior-led delivery
+            </span>
+            <span
+              data-hero-cue
+              className="dim-label hidden lg:inline-flex lg:items-baseline lg:gap-2"
+            >
+              Scroll — the drawing assembles
+              <span aria-hidden="true" className="cue-bob">
+                ↓
+              </span>
+            </span>
+            <span data-hero-fade className="dim-label hidden sm:inline">
+              New builds / Rebuilds / Systems
+            </span>
+          </div>
+        </div>
+      </section>
+    </>
   );
 }
 

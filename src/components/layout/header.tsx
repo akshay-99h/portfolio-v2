@@ -89,7 +89,7 @@ function Header() {
                 aria-hidden="true"
                 className="size-1.5 rounded-full bg-signal"
               />
-              Available
+              Accepting briefs
             </span>
             <ThemeToggle />
             <Button asChild size="sm" className="px-4">

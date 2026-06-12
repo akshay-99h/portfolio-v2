@@ -76,7 +76,7 @@ function ContactSection() {
       <div className="max-w-3xl">
         <p className="section-kicker">Contact</p>
         <h1 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
-          Tell me what the agency needs to help you ship.
+          Tell us what needs to ship.
         </h1>
         <p className="section-copy mt-4 text-sm sm:text-base">
           Share the product, timeline, current stage, and where delivery is
