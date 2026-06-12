@@ -1,12 +1,11 @@
 import type { Project } from "@/types/project";
 
 /**
- * Preview palettes and headlines are lifted from each project's own
- * entry page and globals.css so the home-page plates render as
- * miniatures of the real product.
+ * Preview palettes, headlines, and start-page chrome (wordmark, kicker,
+ * CTAs) are lifted from each project's own entry page and globals.css so
+ * the home-page plates render as miniatures of the real product.
  */
 export const PROJECTS: Project[] = [
-  // --- Featured (first 8 surface on the home index) ------------------------
   {
     slug: "akxost-os",
     name: "Akxost OS",
@@ -26,6 +25,7 @@ export const PROJECTS: Project[] = [
       muted: "#8ba3bf",
       font: "sans",
       headline: "Chat-first operating surface for planning and execution.",
+      brand: "Akxost OS",
     },
   },
   {
@@ -47,6 +47,12 @@ export const PROJECTS: Project[] = [
       muted: "#3a4054",
       font: "sans",
       headline: "The roadmap generator for developers evolving their stack.",
+      brand: "Tool Selector",
+      kicker: "Seven delivery stages",
+      sub: "Answer the intake, get a staged roadmap from Requirements through Observe.",
+      cta: "Generate roadmap",
+      cta2: "View stages",
+      art: "card",
     },
   },
   {
@@ -68,6 +74,12 @@ export const PROJECTS: Project[] = [
       muted: "#dde7df",
       font: "sans",
       headline: "Turn messy supplier catalogs into clean import projects.",
+      brand: "Catalog Cleaner",
+      kicker: "CSV/XLSX → Shopify",
+      sub: "Upload, map, validate, export — with billing and projects built in.",
+      cta: "Upload catalog",
+      cta2: "See pipeline",
+      art: "card",
     },
   },
   {
@@ -158,6 +170,12 @@ export const PROJECTS: Project[] = [
       muted: "#dbb895",
       font: "sans",
       headline: "Better words for better timing.",
+      brand: "Verve",
+      sub: "Built for the moment right before you send — sharper openers, stronger replies.",
+      cta: "Create account",
+      cta2: "Sign in",
+      chips: ["Replies", "Openers", "Topics", "Saved"],
+      art: "device",
     },
   },
   {
@@ -308,6 +326,12 @@ export const PROJECTS: Project[] = [
       font: "sans",
       headline:
         "Compare insurance, loans, mutual funds, and investments in one place.",
+      brand: "Zen IMF",
+      kicker: "Insurance + Loans + Mutual Funds",
+      sub: "Health, term, motor, travel, home, SIP, and loan options from one destination.",
+      cta: "Talk to Expert",
+      cta2: "Explore cover",
+      art: "carousel",
     },
   },
   {
@@ -359,6 +383,11 @@ export const PROJECTS: Project[] = [
       font: "sans",
       headline:
         "Trusted domestic workforce support with dignity at the center.",
+      brand: "Garima Setu Foundation",
+      sub: "Worker verification, practical training, awareness, and ethical placement support.",
+      cta: "Register / Enquire",
+      cta2: "Explore Trust",
+      art: "focus",
     },
   },
   {
@@ -381,6 +410,11 @@ export const PROJECTS: Project[] = [
       font: "sans",
       headline:
         "Step-by-step government services guidance from official sources only.",
+      brand: "RakshaAI",
+      kicker: "Privacy-first · Official sources only",
+      sub: "Describe your need in text or voice — get a verified mission timeline.",
+      cta: "Start a mission",
+      art: "chat",
     },
   },
 
@@ -407,7 +441,12 @@ export const PROJECTS: Project[] = [
       accent: "#5ad1ff",
       muted: "#27405a",
       font: "mono",
-      headline: "Run far, jump clean — the game learns how hard to push.",
+      headline: "Ready to sprint",
+      brand: "Frost Runner Neo",
+      sub: "Tap arena or press Enter · Space/Up jump, P pause",
+      cta: "Start Run",
+      chips: ["DIST 0m", "SCORE 0", "SHARDS 0", "SPEED ×1"],
+      art: "arena",
     },
   },
   {
@@ -560,6 +599,29 @@ export const PROJECTS: Project[] = [
     },
   },
 ];
+
+/**
+ * The home-page "Selected work" index — the strongest cross-section of
+ * the studio: flagship product work plus live, verifiable deployments.
+ */
+const FEATURED_SLUGS = [
+  "akxost-os",
+  "raksha-ai",
+  "zen-imf",
+  "supplier-catalog-cleaner",
+  "frost-runner",
+  "verve",
+  "tool-selector",
+  "garima-setu",
+] as const;
+
+export const FEATURED_PROJECTS: Project[] = FEATURED_SLUGS.map((slug) => {
+  const project = PROJECTS.find((entry) => entry.slug === slug);
+  if (!project) {
+    throw new Error(`Featured project missing from index: ${slug}`);
+  }
+  return project;
+});
 
 export const PROJECT_GROUPS = [
   {
