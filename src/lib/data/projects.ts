@@ -146,6 +146,10 @@ export const PROJECTS: Project[] = [
       "Expo app with a full Next.js web counterpart: auth, saved libraries, auto-rotating prompt decks, and an editorial warm-paper interface built for fast trust.",
     stack: ["Expo", "Next.js", "PostgreSQL", "GSAP"],
     year: "2025",
+    link: {
+      label: "verve.akxost.com",
+      href: "https://verve.akxost.com",
+    },
     preview: {
       frame: "phone",
       bg: "#f5efe8",
@@ -191,6 +195,10 @@ export const PROJECTS: Project[] = [
       "Expo app with a matching Next.js web build — captions, bios, and hook ideas with saved collections, sharing one product structure across mobile and web.",
     stack: ["Expo", "Next.js", "TypeScript", "PWA"],
     year: "2025",
+    link: {
+      label: "voxa.akxost.com",
+      href: "https://voxa.akxost.com",
+    },
     preview: {
       frame: "phone",
       bg: "#fffdf8",
@@ -212,6 +220,10 @@ export const PROJECTS: Project[] = [
       "Spark prompts, repair scripts, and rituals filtered by situation — an intimate plum-and-rose product carried identically across Expo mobile and Next.js web.",
     stack: ["Expo", "Next.js", "TypeScript", "Content Systems"],
     year: "2025",
+    link: {
+      label: "relume.akxost.com",
+      href: "https://relume.akxost.com",
+    },
     preview: {
       frame: "phone",
       bg: "#fff9f6",
@@ -233,6 +245,10 @@ export const PROJECTS: Project[] = [
       "A directory product for better first impressions — browse, save what fits your style, and keep the same structure on mobile and web.",
     stack: ["Expo", "Next.js", "TypeScript", "Design System"],
     year: "2025",
+    link: {
+      label: "flair.akxost.com",
+      href: "https://flair.akxost.com",
+    },
     preview: {
       frame: "phone",
       bg: "#fcf8f1",
@@ -254,6 +270,10 @@ export const PROJECTS: Project[] = [
       "Date-aware day-by-day reveals, a breathing pause animation, comfort slider, and soft confetti on yes — GSAP and canvas built to feel calm, never pushy.",
     stack: ["Next.js", "GSAP", "Canvas", "Tailwind"],
     year: "2026",
+    link: {
+      label: "be-my-valentine.akxost.com",
+      href: "https://be-my-valentine.akxost.com",
+    },
     preview: {
       frame: "browser",
       bg: "#fff7f7",
@@ -341,6 +361,204 @@ export const PROJECTS: Project[] = [
         "Trusted domestic workforce support with dignity at the center.",
     },
   },
+  {
+    slug: "raksha-ai",
+    name: "RakshaAI",
+    group: "product",
+    platform: "Web platform + voice",
+    summary:
+      "An AI assistant that walks Indian citizens through government services and legal questions — multilingual, voice-first, privacy-first.",
+    details:
+      "FastAPI + React build with Claude-powered agents for intent, official .gov.in source verification, workflow timelines, and scam detection. Inline Whisper/TTS voice conversation, OCR document analysis, and a strict no-Aadhaar/PAN/OTP data policy.",
+    stack: ["FastAPI", "React", "Claude", "Whisper"],
+    year: "2026",
+    preview: {
+      frame: "browser",
+      bg: "#f4f6fb",
+      fg: "#1a2238",
+      accent: "#6d28d9",
+      muted: "#dde3f0",
+      font: "sans",
+      headline:
+        "Step-by-step government services guidance from official sources only.",
+    },
+  },
+
+  // --- Minigames (Snowflake game buildathon) --------------------------------
+  {
+    slug: "frost-runner",
+    name: "Frost Runner",
+    group: "minigames",
+    platform: "Web game",
+    summary:
+      "An infinite runner with tight jump timing, coyote time, and difficulty that adapts to your own run history.",
+    details:
+      "Deterministic physics with jump buffering, config-driven obstacle and shard spawning, and segment-based personalization — run telemetry feeds a Snowflake-backed difficulty endpoint that retunes speed and spawn cadence.",
+    stack: ["Next.js", "Canvas", "Snowflake", "Telemetry"],
+    year: "2026",
+    link: {
+      label: "frost-runner.akxost.com",
+      href: "https://frost-runner.akxost.com",
+    },
+    preview: {
+      frame: "browser",
+      bg: "#0b1622",
+      fg: "#e6f1fb",
+      accent: "#5ad1ff",
+      muted: "#27405a",
+      font: "mono",
+      headline: "Run far, jump clean — the game learns how hard to push.",
+    },
+  },
+  {
+    slug: "tap-to-thaw",
+    name: "Tap-to-Thaw",
+    group: "minigames",
+    platform: "Web game",
+    summary:
+      "A rotatable 3D arrow-block puzzle: read the occlusion, then eject blocks in the only order that frees them.",
+    details:
+      "Seeded 3×3×3 shell puzzles where each block can only leave along its arrow if the lane is clear — combo scoring rewards deliberate sequencing over fast clicking.",
+    stack: ["Next.js", "Three.js", "Snowflake", "Telemetry"],
+    year: "2026",
+    preview: {
+      frame: "browser",
+      bg: "#0e1a26",
+      fg: "#e8f3fa",
+      accent: "#7dd3fc",
+      muted: "#2c4658",
+      font: "mono",
+      headline: "Inspect, orient, eject — spatial judgment over tap speed.",
+    },
+  },
+  {
+    slug: "snow-heist",
+    name: "Snow Heist",
+    group: "minigames",
+    platform: "Web game",
+    summary:
+      "A branching heist where every choice moves risk, stealth, and tempo — beat the clock without tripping detection.",
+    details:
+      "A transparent narrative-plus-stat engine: weighted score per choice, clamped stat updates, timer pressure, and dead-end routes, with lifetime run analytics across sessions.",
+    stack: ["Next.js", "State Machines", "Snowflake", "Telemetry"],
+    year: "2026",
+    preview: {
+      frame: "browser",
+      bg: "#101321",
+      fg: "#e9ecf6",
+      accent: "#a5b4fc",
+      muted: "#2c3150",
+      font: "mono",
+      headline: "Spend stealth to buy tempo — just stay under detection.",
+    },
+  },
+  {
+    slug: "avalanche-defense",
+    name: "Avalanche Defense",
+    group: "minigames",
+    platform: "Web game",
+    summary:
+      "Lane-based tower defense on a 5×8 grid — place cannons, frost, and rails between waves, then watch the board hold.",
+    details:
+      "A prep-and-execute loop with three tuned tower archetypes, pulse-staggered spawns, escalating leak damage, and a width-versus-depth economy through tiered grid upgrades.",
+    stack: ["Next.js", "Simulation", "Snowflake", "Telemetry"],
+    year: "2026",
+    preview: {
+      frame: "browser",
+      bg: "#0d1726",
+      fg: "#e4eefb",
+      accent: "#60a5fa",
+      muted: "#243a55",
+      font: "mono",
+      headline:
+        "Cannons stabilize, frost controls tempo, rails punish clusters.",
+    },
+  },
+  {
+    slug: "blizzard-market",
+    name: "Blizzard Market",
+    group: "minigames",
+    platform: "Web game",
+    summary:
+      "A turn-based trading sandbox: four commodities, dynamic volatility, and a prediction streak that pays for conviction.",
+    details:
+      "Stochastic price generation with per-commodity sensitivity, marked-to-market net worth, directional prediction streaks, randomized session quests, and behavioral telemetry on trade-side flips.",
+    stack: ["Next.js", "Simulation", "Snowflake", "Telemetry"],
+    year: "2026",
+    preview: {
+      frame: "browser",
+      bg: "#0c141f",
+      fg: "#e7eef7",
+      accent: "#34d399",
+      muted: "#22364a",
+      font: "mono",
+      headline: "Manage exposure under uncertainty, not one memorized pattern.",
+    },
+  },
+  {
+    slug: "puzzle-drift",
+    name: "Puzzle Drift",
+    group: "minigames",
+    platform: "Web game",
+    summary:
+      "A 60-second arcade racer where clean drifts and quick arithmetic both fund the nitro you need to keep momentum.",
+    details:
+      "Sine-generated track curvature, context-sensitive drift events, timed sequence challenges with answer-keyed rewards, and traffic hazards that compound mistakes in dense segments.",
+    stack: ["Next.js", "Canvas", "Snowflake", "Telemetry"],
+    year: "2026",
+    preview: {
+      frame: "browser",
+      bg: "#131022",
+      fg: "#ece9f8",
+      accent: "#f472b6",
+      muted: "#322b52",
+      font: "mono",
+      headline: "Solve fast, drift clean, convert it all into distance.",
+    },
+  },
+  {
+    slug: "ice-climber-clicker",
+    name: "Ice Climber Clicker",
+    group: "minigames",
+    platform: "Web game",
+    summary:
+      "Drive a mining rig up procedural slopes — mine, invest, survive, then prestige-reset for compounding power.",
+    details:
+      "Physics-based traversal over layered-sine terrain with fuel and hull integrity, active mining plus idle miner economy, shaft cooldown routing, and altitude-gated prestige resets.",
+    stack: ["Next.js", "Canvas", "Snowflake", "Telemetry"],
+    year: "2026",
+    preview: {
+      frame: "browser",
+      bg: "#0b1a24",
+      fg: "#e5f2f8",
+      accent: "#fbbf24",
+      muted: "#23404f",
+      font: "mono",
+      headline:
+        "Drive, mine, invest, survive — then prestige and climb higher.",
+    },
+  },
+  {
+    slug: "squad-rescue-relay",
+    name: "Squad Rescue Relay",
+    group: "minigames",
+    platform: "Web game",
+    summary:
+      "A top-down rescue relay: carry eight civilians out of spreading fire before heat, hazards, or the clock end the run.",
+    details:
+      "Carry-state movement penalties, a heat meter with stun-and-drop failure events, once-per-carry bonus detours, and probabilistic fire spread that only fast rescue cadence can contain.",
+    stack: ["Next.js", "Canvas", "Snowflake", "Telemetry"],
+    year: "2026",
+    preview: {
+      frame: "browser",
+      bg: "#1a1210",
+      fg: "#f6ebe4",
+      accent: "#fb7185",
+      muted: "#4a2e26",
+      font: "mono",
+      headline: "The fastest line is rarely the safest line.",
+    },
+  },
 ];
 
 export const PROJECT_GROUPS = [
@@ -358,5 +576,11 @@ export const PROJECT_GROUPS = [
     id: "community" as const,
     label: "Community",
     description: "Platforms and websites for public-facing organizations",
+  },
+  {
+    id: "minigames" as const,
+    label: "Minigames",
+    description:
+      "Telemetry-instrumented browser games from the Snowflake game buildathon",
   },
 ] as const;

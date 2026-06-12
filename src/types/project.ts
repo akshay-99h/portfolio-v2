@@ -1,4 +1,4 @@
-export type ProjectGroup = "product" | "lifestyle" | "community";
+export type ProjectGroup = "product" | "lifestyle" | "community" | "minigames";
 
 export interface ProjectLink {
   label: string;

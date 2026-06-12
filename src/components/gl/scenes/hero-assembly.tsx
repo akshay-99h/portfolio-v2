@@ -116,6 +116,11 @@ const PALETTES: Record<
     signal: string;
     edge: string;
     edgeOpacity: number;
+    /** Surface finish — dark mode runs glossier so modules catch light
+     *  and separate from the near-black page background. */
+    clayRoughness: number;
+    clayMetalness: number;
+    signalRoughness: number;
   }
 > = {
   light: {
@@ -123,12 +128,18 @@ const PALETTES: Record<
     signal: "#2aa49d",
     edge: "#131310",
     edgeOpacity: 0.5,
+    clayRoughness: 0.9,
+    clayMetalness: 0.02,
+    signalRoughness: 0.55,
   },
   dark: {
-    clay: ["#232722", "#1b1f1b", "#2a2e29"],
+    clay: ["#3a3f38", "#30352f", "#474c44"],
     signal: "#2dbab4",
     edge: "#e8e5de",
     edgeOpacity: 0.65,
+    clayRoughness: 0.38,
+    clayMetalness: 0.45,
+    signalRoughness: 0.3,
   },
 };
 
@@ -348,6 +359,15 @@ function HeroAssemblyObject({ drivers, tone }: HeroAssemblyProps) {
         intensity={tone === "dark" ? 1.5 : 1.1}
       />
       <directionalLight position={[-5, 2, -2]} intensity={0.35} />
+      {tone === "dark" ? (
+        // Cool rim fill so glossy faces pick up a sheen against the
+        // near-black page background.
+        <directionalLight
+          position={[-3, 4, 5]}
+          intensity={0.7}
+          color="#bfeae6"
+        />
+      ) : null}
 
       <group ref={rigRef}>
         {/* The drawing envelope the object assembles into. */}
@@ -379,8 +399,12 @@ function HeroAssemblyObject({ drivers, tone }: HeroAssemblyProps) {
                     ? palette.signal
                     : palette.clay[i % palette.clay.length]
                 }
-                roughness={voxel.id === "signal" ? 0.55 : 0.9}
-                metalness={0.02}
+                roughness={
+                  voxel.id === "signal"
+                    ? palette.signalRoughness
+                    : palette.clayRoughness
+                }
+                metalness={palette.clayMetalness}
                 transparent
                 opacity={0}
               />
