@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
+import { CinematicInterlude } from "@/components/sections/cinematic-interlude";
 import { FieldNotesSection } from "@/components/sections/field-notes-section";
 import { HeroAssemblySection } from "@/components/sections/hero-assembly-section";
 import { MethodSection } from "@/components/sections/method-section";
@@ -27,9 +28,23 @@ export default function Home() {
       <main className="pb-14 sm:pb-18">
         <HeroAssemblySection />
 
+        {/* Fig. 02a — the object takes the empty stage and reassembles. */}
+        <CinematicInterlude
+          figure="Fig. 02a — Reassembly"
+          caption="The object breaks to its modules and rebuilds — twenty-seven parts, one form."
+          meta="Full sheet — no annotations"
+        />
+
         <MethodSection />
 
         <WorkIndexSection />
+
+        {/* Fig. 03a — the object recedes to scale, then re-forms. */}
+        <CinematicInterlude
+          figure="Fig. 03a — To scale"
+          caption="Held at distance, the whole system reads at once — then draws back in."
+          meta="28.6139° N — 77.2090° E"
+        />
 
         <FieldNotesSection />
 

@@ -7,6 +7,8 @@ import * as THREE from "three";
 
 import { SceneCanvas } from "@/components/gl/scene-canvas";
 import { ContourTerrain } from "@/components/gl/scenes/contour-terrain";
+import { DraftingWorld } from "@/components/gl/scenes/drafting-world";
+import { audio } from "@/lib/audio/engine";
 
 /**
  * Shared mutable drivers. The DOM section writes targets (scroll progress,
@@ -159,22 +161,81 @@ const ISO_Y = Math.PI / 4;
  */
 type Waypoint = { at: number; x: number; y: number; s: number };
 
+/**
+ * The object's tour, re-keyed for two cinematic interludes (full-height,
+ * pinned beats) that sit at ~0.22 and ~0.66 of document scroll. At each the
+ * cube takes the empty stage: it rushes large to fill the frame, then later
+ * shrinks to a distant speck. Content sections fall between these peaks.
+ *
+ * Scroll map (landscape):
+ *   0.00  hero — seated right
+ *   0.16  hero pin completes
+ *   0.22  INTERLUDE 1 — center, huge (fills frame), explodes/reassembles
+ *   0.36  method — left rail, mid
+ *   0.52  work index — right, mid
+ *   0.66  INTERLUDE 2 — center, tiny distant speck, re-explodes
+ *   0.82  field notes — left
+ *   1.00  brief/footer — settles center
+ */
 const TRAVEL_LANDSCAPE: Waypoint[] = [
   { at: 0.0, x: 0.92, y: 0.05, s: 1 }, // hero — seated in the right column
-  { at: 0.28, x: 0.92, y: 0.05, s: 1 }, // holds through the pinned assembly
-  { at: 0.45, x: -0.85, y: -0.18, s: 0.62 }, // method — crosses to the left rail
-  { at: 0.62, x: 0.88, y: 0.15, s: 0.55 }, // work index — back right
-  { at: 0.8, x: -0.85, y: 0.0, s: 0.55 }, // field notes — left again
+  { at: 0.16, x: 0.92, y: 0.05, s: 1 }, // holds through the pinned assembly
+  { at: 0.22, x: 0.0, y: 0.0, s: 2.25 }, // INTERLUDE 1 — fills the frame
+  { at: 0.36, x: -0.85, y: -0.18, s: 0.6 }, // method — crosses to the left rail
+  { at: 0.52, x: 0.88, y: 0.15, s: 0.55 }, // work index — back right
+  { at: 0.66, x: 0.0, y: 0.1, s: 0.22 }, // INTERLUDE 2 — distant speck
+  { at: 0.82, x: -0.85, y: 0.0, s: 0.55 }, // field notes — left again
   { at: 1.0, x: 0.0, y: -0.25, s: 0.7 }, // brief/footer — settles center
 ];
 
 const TRAVEL_PORTRAIT: Waypoint[] = [
   { at: 0.0, x: 0.0, y: -0.45, s: 0.8 },
-  { at: 0.28, x: -0.7, y: 0.1, s: 0.5 },
+  { at: 0.16, x: 0.0, y: -0.45, s: 0.8 },
+  { at: 0.22, x: 0.0, y: 0.0, s: 1.7 }, // INTERLUDE 1 — fills the (narrow) frame
+  { at: 0.36, x: -0.7, y: 0.1, s: 0.5 },
   { at: 0.52, x: 0.7, y: 0.1, s: 0.45 },
-  { at: 0.78, x: -0.7, y: 0.05, s: 0.45 },
+  { at: 0.66, x: 0.0, y: 0.1, s: 0.2 }, // INTERLUDE 2 — distant speck
+  { at: 0.82, x: -0.7, y: 0.05, s: 0.45 },
   { at: 1.0, x: 0.0, y: -0.3, s: 0.55 },
 ];
+
+/**
+ * Form track keyed to document scroll: 0 = exploded technical drawing,
+ * 1 = seated solid object. The cube blows apart and reforms at each
+ * interlude so the empty stage reads as a live reassembly, then holds
+ * seated through the content sections between them.
+ */
+type FormKey = { at: number; form: number };
+
+const ASSEMBLY_TRACK: FormKey[] = [
+  { at: 0.16, form: 1 }, // leaves the hero fully seated
+  { at: 0.19, form: 0.05 }, // INTERLUDE 1 — flies apart on entry
+  { at: 0.25, form: 1 }, // ...and snaps back together
+  { at: 0.62, form: 1 }, // holds seated through method/work
+  { at: 0.66, form: 0.05 }, // INTERLUDE 2 — explodes again
+  { at: 0.7, form: 1 }, // reassembles
+  { at: 1.0, form: 1 },
+];
+
+function sampleForm(progress: number) {
+  const t = clamp01(progress);
+  if (t <= ASSEMBLY_TRACK[0].at) {
+    return ASSEMBLY_TRACK[0].form;
+  }
+  let from = ASSEMBLY_TRACK[0];
+  let to = ASSEMBLY_TRACK[ASSEMBLY_TRACK.length - 1];
+  for (let i = 0; i < ASSEMBLY_TRACK.length - 1; i++) {
+    if (t >= ASSEMBLY_TRACK[i].at && t <= ASSEMBLY_TRACK[i + 1].at) {
+      from = ASSEMBLY_TRACK[i];
+      to = ASSEMBLY_TRACK[i + 1];
+      break;
+    }
+  }
+  const span = to.at - from.at;
+  const k =
+    span > 0 ? THREE.MathUtils.smoothstep((t - from.at) / span, 0, 1) : 1;
+  return THREE.MathUtils.lerp(from.form, to.form, k);
+}
 
 function easeInOutCubic(t: number) {
   return t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2;
@@ -205,13 +266,46 @@ function sampleTravel(points: Waypoint[], progress: number) {
   };
 }
 
-function HeroAssemblyObject({ drivers, tone }: HeroAssemblyProps) {
+/**
+ * Window of document scroll where the cube is fully seated and centred enough
+ * to invite interaction — between the hero pin completing and the second
+ * interlude. Hover/click on the mini-cube faces is only live in here.
+ */
+const INTERACTIVE_FROM = 0.16;
+const INTERACTIVE_TO = 0.62;
+
+function HeroAssemblyObject({
+  drivers,
+  tone,
+  onInteractiveChange,
+}: HeroAssemblyProps & { onInteractiveChange?: (live: boolean) => void }) {
   const palette = PALETTES[tone];
 
   const rigRef = React.useRef<THREE.Group>(null);
   const voxelRefs = React.useRef<(THREE.Group | null)[]>([]);
   const solidMats = React.useRef<THREE.MeshStandardMaterial[]>([]);
   const edgeMat = React.useRef<THREE.LineBasicMaterial>(null);
+
+  // Per-voxel interaction state, eased toward each frame:
+  //  hover  → lifts toward 1 while the pointer is over a face
+  //  press  → spikes to 1 on click then decays (the "signal flash")
+  const hover = React.useRef<Float32Array>(new Float32Array(VOXELS.length));
+  const press = React.useRef<Float32Array>(new Float32Array(VOXELS.length));
+  const hoverTarget = React.useRef<Float32Array>(
+    new Float32Array(VOXELS.length),
+  );
+  // Base colors captured once so flashes can lerp from them back to rest.
+  const baseColors = React.useRef<THREE.Color[]>([]);
+  const flashColor = React.useMemo(
+    () => new THREE.Color(palette.signal),
+    [palette.signal],
+  );
+
+  // Whether the cube currently accepts pointer interaction (drives the DOM
+  // canvas pointer-events toggle so the page still scrolls everywhere else).
+  const interactive = React.useRef(false);
+  // Tracks the seated form so assembly snap/ping sounds fire on the rising edge.
+  const wasSeated = React.useRef(false);
 
   // Damped simulation state (targets live in `drivers`).
   const sim = React.useRef({
@@ -221,6 +315,20 @@ function HeroAssemblyObject({ drivers, tone }: HeroAssemblyProps) {
     pointerY: 0,
     scroll: 0,
   });
+
+  // Reduced motion keeps the cube seated through the interludes instead of
+  // exploding it; the scroll-keyed travel (position/scale) still applies so
+  // the object remains where each section expects it.
+  const reducedMotion = React.useRef(false);
+  React.useEffect(() => {
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    reducedMotion.current = media.matches;
+    const onChange = (event: MediaQueryListEvent) => {
+      reducedMotion.current = event.matches;
+    };
+    media.addEventListener("change", onChange);
+    return () => media.removeEventListener("change", onChange);
+  }, []);
 
   // Envelope wireframe: build once, dispose on unmount.
   const envelopeGeom = React.useMemo(() => {
@@ -258,9 +366,43 @@ function HeroAssemblyObject({ drivers, tone }: HeroAssemblyProps) {
 
     const p = s.progress;
     const intro = s.intro;
+    const time = state.clock.elapsedTime;
 
-    const assembleBase = THREE.MathUtils.smoothstep(p, 0.08, 0.92);
-    const rotT = easeInOutCubic(THREE.MathUtils.smoothstep(p, 0, 0.9));
+    // The cube's form has two drivers that hand off cleanly:
+    //  • the hero pin (`progress`) seats it during the first scroll, and
+    //  • the scroll-keyed `ASSEMBLY_TRACK` re-explodes/reforms it at each
+    //    cinematic interlude further down the page.
+    // The hero owns the form until its assembly completes (~scroll 0.16);
+    // past that, the document-scroll track takes over.
+    const heroAssemble = THREE.MathUtils.smoothstep(p, 0.08, 0.92);
+    // Reduced motion holds the form seated past the hero (no explode beats).
+    const trackForm = reducedMotion.current ? 1 : sampleForm(s.scroll);
+    const handoff = THREE.MathUtils.smoothstep(s.scroll, 0.14, 0.18);
+    const assembleBase = THREE.MathUtils.lerp(heroAssemble, trackForm, handoff);
+
+    // --- Assembly sound: fire snap-burst + keystone ping on the rising edge
+    // of "seated" (form crosses ~0.92), so each reassembly beat is audible.
+    const seatedNow = assembleBase > 0.92;
+    if (seatedNow && !wasSeated.current) {
+      audio.playAssembly(VOXELS.length, 0.45);
+    }
+    wasSeated.current = seatedNow;
+
+    // --- Interactive window: cube seated AND within the inviting scroll band.
+    const live =
+      !reducedMotion.current &&
+      seatedNow &&
+      s.scroll >= INTERACTIVE_FROM &&
+      s.scroll <= INTERACTIVE_TO;
+    if (live !== interactive.current) {
+      interactive.current = live;
+      onInteractiveChange?.(live);
+    }
+
+    // Rotation also continues past the hero so the form reads in 3D during
+    // the interludes; once seated it follows the slow tour rotation below.
+    const rotDrive = Math.max(THREE.MathUtils.smoothstep(p, 0, 0.9), handoff);
+    const rotT = easeInOutCubic(rotDrive);
 
     const rig = rigRef.current;
     if (rig) {
@@ -292,6 +434,13 @@ function HeroAssemblyObject({ drivers, tone }: HeroAssemblyProps) {
       rig.scale.setScalar((0.9 + 0.1 * intro) * travel.s);
     }
 
+    // Idle "breathe" once seated — a slow whole-object pulse, plus a soft
+    // float; both fade to zero while the object is in motion (assembling).
+    // Reduced motion freezes the idle drift and the signal pulse entirely.
+    const idle = reducedMotion.current ? 0 : 1;
+    const seatedAmt = THREE.MathUtils.smoothstep(assembleBase, 0.8, 1) * idle;
+    const breathe = Math.sin(time * 1.1) * 0.5 + 0.5; // 0..1
+
     VOXELS.forEach((voxel, i) => {
       const group = voxelRefs.current[i];
       if (!group) {
@@ -309,6 +458,25 @@ function HeroAssemblyObject({ drivers, tone }: HeroAssemblyProps) {
         i * BORN_STAGGER + BORN_WINDOW,
       );
 
+      // Ease hover + press toward their targets (press decays to 0 on its own).
+      hover.current[i] = THREE.MathUtils.damp(
+        hover.current[i],
+        hoverTarget.current[i] * seatedAmt,
+        12,
+        dt,
+      );
+      press.current[i] = THREE.MathUtils.damp(press.current[i], 0, 6, dt);
+      const h = hover.current[i];
+      const pr = press.current[i];
+
+      // Idle float: per-module phase offset so the seated object shimmers
+      // gently rather than moving as one rigid block.
+      const phase = i * 0.5;
+      const floatY =
+        seatedAmt * (Math.sin(time * 0.9 + phase) * 0.012 + breathe * 0.01);
+      // Hover lifts the face toward the viewer; press punches it in briefly.
+      const lift = h * 0.06 - pr * 0.05;
+
       group.position.set(
         THREE.MathUtils.lerp(
           voxel.seat[0] * SPREAD[0] + voxel.drift[0],
@@ -319,24 +487,43 @@ function HeroAssemblyObject({ drivers, tone }: HeroAssemblyProps) {
           voxel.seat[1] * SPREAD[1] + voxel.drift[1],
           voxel.seat[1],
           t,
-        ),
+        ) + floatY,
         THREE.MathUtils.lerp(
           voxel.seat[2] * SPREAD[2] + voxel.drift[2],
           voxel.seat[2],
           t,
-        ),
+        ) + lift,
       );
       group.rotation.set(
         voxel.scatter[0] * (1 - t),
         voxel.scatter[1] * (1 - t),
         voxel.scatter[2] * (1 - t),
       );
-      group.scale.setScalar(born);
+      // Hover swells the module slightly; press dents it.
+      group.scale.setScalar(born * (1 + h * 0.05 - pr * 0.08));
     });
 
-    for (const mat of solidMats.current) {
+    // Signal corner pulse: the keystone (last voxel) breathes the teal accent
+    // even at rest, so the eye always finds the signal.
+    const signalIdx = VOXELS.length - 1;
+    const signalPulse = seatedAmt * (Math.sin(time * 2.0) * 0.5 + 0.5);
+
+    solidMats.current.forEach((mat, i) => {
       mat.opacity = intro;
-    }
+      const base = baseColors.current[i];
+      if (!base) {
+        return;
+      }
+      // Flash strength: press flash + hover tint + (signal corner) idle pulse.
+      let flash = press.current[i] * 0.9 + hover.current[i] * 0.25;
+      if (i === signalIdx) {
+        flash = Math.max(flash, signalPulse * 0.4);
+      }
+      mat.color.copy(base).lerp(flashColor, clamp01(flash));
+      const targetEmissive = clamp01(flash) * (i === signalIdx ? 0.6 : 0.4);
+      mat.emissive.copy(flashColor);
+      mat.emissiveIntensity = targetEmissive;
+    });
     if (edgeMat.current) {
       // The drawing stays faintly present even once the object is seated.
       edgeMat.current.opacity =
@@ -345,15 +532,51 @@ function HeroAssemblyObject({ drivers, tone }: HeroAssemblyProps) {
         (1 - 0.55 * THREE.MathUtils.smoothstep(p, 0.55, 0.95));
     }
 
-    if (settling) {
+    // Drone swells with the cube's presence — loud when seated/large, quiet
+    // when exploded or shrunk to a distant speck.
+    audio.setDroneLevel(seatedAmt * 0.7 + 0.15);
+
+    // Keep the demand loop alive while the object breathes, while any face is
+    // hovered/flashing, or while values are still settling.
+    let activeFlash = signalPulse > 0.001;
+    for (let i = 0; i < VOXELS.length; i++) {
+      if (press.current[i] > 0.002 || hover.current[i] > 0.002) {
+        activeFlash = true;
+        break;
+      }
+    }
+    if (settling || seatedAmt > 0.001 || activeFlash) {
       state.invalidate();
     }
   });
 
   const registerSolid = (mat: THREE.MeshStandardMaterial | null) => {
     if (mat && !solidMats.current.includes(mat)) {
+      baseColors.current[solidMats.current.length] = mat.color.clone();
       solidMats.current.push(mat);
     }
+  };
+
+  // Pointer handlers, only honoured while the cube is in its interactive window.
+  const handleOver = (i: number) => {
+    if (!interactive.current) {
+      return;
+    }
+    hoverTarget.current[i] = 1;
+    audio.play("hover");
+    drivers.current.kick?.();
+  };
+  const handleOut = (i: number) => {
+    hoverTarget.current[i] = 0;
+    drivers.current.kick?.();
+  };
+  const handleDown = (i: number) => {
+    if (!interactive.current) {
+      return;
+    }
+    press.current[i] = 1;
+    audio.play(i === VOXELS.length - 1 ? "ping" : "click");
+    drivers.current.kick?.();
   };
 
   return (
@@ -393,6 +616,15 @@ function HeroAssemblyObject({ drivers, tone }: HeroAssemblyProps) {
               args={[CUBE_SIZE, CUBE_SIZE, CUBE_SIZE]}
               radius={0.045}
               smoothness={8}
+              onPointerOver={(event) => {
+                event.stopPropagation();
+                handleOver(i);
+              }}
+              onPointerOut={() => handleOut(i)}
+              onPointerDown={(event) => {
+                event.stopPropagation();
+                handleDown(i);
+              }}
             >
               <meshStandardMaterial
                 ref={registerSolid}
@@ -437,16 +669,72 @@ function KickBridge({
   return null;
 }
 
+/**
+ * Bridges the in-scene "interactive" flag to the DOM: the cube's canvas lives
+ * inside a `pointer-events-none` fixed layer so the page scrolls/clicks
+ * normally. While the cube is interactive we flip the canvas itself to
+ * `pointer-events: auto` (so faces can be hovered/clicked) and forward wheel
+ * events back to the window so Lenis keeps scrolling underneath it.
+ */
+function CanvasInteractivity({ live }: { live: boolean }) {
+  const gl = useThree((state) => state.gl);
+
+  React.useEffect(() => {
+    const canvas = gl.domElement;
+    if (!live) {
+      canvas.style.pointerEvents = "none";
+      canvas.style.touchAction = "";
+      return;
+    }
+    canvas.style.pointerEvents = "auto";
+    // Let touch scrolling pass through on mobile; wheel is forwarded below.
+    canvas.style.touchAction = "pan-y";
+
+    const forwardWheel = (event: WheelEvent) => {
+      window.scrollBy({ top: event.deltaY, behavior: "auto" });
+    };
+    canvas.addEventListener("wheel", forwardWheel, { passive: true });
+    return () => {
+      canvas.removeEventListener("wheel", forwardWheel);
+      canvas.style.pointerEvents = "none";
+      canvas.style.touchAction = "";
+    };
+  }, [gl, live]);
+
+  return null;
+}
+
 function HeroAssemblyCanvas({ drivers, tone }: HeroAssemblyProps) {
+  const [interactive, setInteractive] = React.useState(false);
+
   return (
     <SceneCanvas className="h-full w-full" fov={32} cameraZ={8.5}>
       <KickBridge drivers={drivers} />
+      <CanvasInteractivity live={interactive} />
       {/* The living survey sheet — breathes behind the whole page. */}
       <ContourTerrain drivers={drivers} tone={tone} />
-      <HeroAssemblyObject drivers={drivers} tone={tone} />
+      {/* The drafting world — grid, benchmarks, dimensions, graphite, horizon.
+          Sits between the map and the object; richest in hero + interludes. */}
+      <DraftingWorld drivers={drivers} tone={tone} />
+      <HeroAssemblyObject
+        drivers={drivers}
+        tone={tone}
+        onInteractiveChange={setInteractive}
+      />
     </SceneCanvas>
   );
 }
 
-export { HeroAssemblyCanvas };
-export type { AssemblyDrivers };
+// Shared with the drafting world so dimension lines wrap the real cube
+// (single source of truth for the object's travel + footprint).
+export {
+  HeroAssemblyCanvas,
+  sampleTravel,
+  sampleForm,
+  TRAVEL_LANDSCAPE,
+  TRAVEL_PORTRAIT,
+  ENVELOPE,
+  ISO_X,
+  ISO_Y,
+};
+export type { AssemblyDrivers, Tone, Waypoint };

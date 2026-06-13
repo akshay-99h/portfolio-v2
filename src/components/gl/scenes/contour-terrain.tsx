@@ -48,11 +48,13 @@ type Region = {
 
 const REGIONS: Region[] = [
   { at: 0.0, zoom: 2.6, warp: 0.55, panX: 0.0, panY: 0.0, accent: 0.35 }, // hero — calm plains
-  { at: 0.28, zoom: 3.0, warp: 0.8, panX: 1.4, panY: 0.6, accent: 0.45 }, // assembly — gentle folds
-  { at: 0.45, zoom: 3.8, warp: 1.25, panX: 2.8, panY: -0.8, accent: 0.55 }, // method — ridgeline
-  { at: 0.62, zoom: 3.2, warp: 0.95, panX: 4.0, panY: 1.4, accent: 0.5 }, // work — open basin
-  { at: 0.8, zoom: 4.4, warp: 1.5, panX: 5.0, panY: -1.6, accent: 0.7 }, // field notes — dense relief
-  { at: 1.0, zoom: 2.9, warp: 0.7, panX: 5.8, panY: 2.4, accent: 0.45 }, // brief — settles flat
+  { at: 0.16, zoom: 3.0, warp: 0.8, panX: 1.4, panY: 0.6, accent: 0.45 }, // hero pin — gentle folds
+  { at: 0.22, zoom: 1.7, warp: 1.7, panX: 2.6, panY: -0.4, accent: 0.65 }, // INTERLUDE 1 — sweeping wide vista
+  { at: 0.36, zoom: 3.8, warp: 1.1, panX: 3.4, panY: -0.9, accent: 0.5 }, // method — ridgeline
+  { at: 0.52, zoom: 3.2, warp: 0.95, panX: 4.6, panY: 1.4, accent: 0.5 }, // work — open basin
+  { at: 0.66, zoom: 5.2, warp: 1.9, panX: 6.2, panY: -1.8, accent: 0.78 }, // INTERLUDE 2 — dense aerial relief
+  { at: 0.82, zoom: 4.2, warp: 1.4, panX: 7.0, panY: 0.4, accent: 0.6 }, // field notes — folded terrain
+  { at: 1.0, zoom: 2.9, warp: 0.7, panX: 7.8, panY: 2.4, accent: 0.45 }, // brief — settles flat
 ];
 
 function clamp01(value: number) {

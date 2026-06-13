@@ -11,6 +11,16 @@ function isValidEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
+/** Escape user input before it lands in the email HTML. */
+function escapeHtml(value: string) {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 export async function POST(request: Request) {
   try {
     const payload = (await request.json()) as Partial<ContactPayload>;
@@ -43,24 +53,39 @@ export async function POST(request: Request) {
     }
 
     const resend = new Resend(resendKey);
+    const from =
+      process.env.CONTACT_FROM ?? "Portfolio Contact <onboarding@resend.dev>";
 
-    await resend.emails.send({
-      from: "Portfolio Contact <onboarding@resend.dev>",
+    const safeName = escapeHtml(name);
+    const safeEmail = escapeHtml(email);
+    const safeMessage = escapeHtml(message).replace(/\n/g, "<br />");
+
+    const { data, error } = await resend.emails.send({
+      from,
       to: [contactEmail],
       replyTo: email,
       subject: `Portfolio inquiry from ${name}`,
+      text: `New portfolio inquiry\n\nName: ${name}\nEmail: ${email}\n\nMessage:\n${message}`,
       html: `
         <div style="font-family: Arial, sans-serif; line-height: 1.6;">
           <h2>New portfolio inquiry</h2>
-          <p><strong>Name:</strong> ${name}</p>
-          <p><strong>Email:</strong> ${email}</p>
+          <p><strong>Name:</strong> ${safeName}</p>
+          <p><strong>Email:</strong> ${safeEmail}</p>
           <p><strong>Message:</strong></p>
-          <p>${message.replace(/\n/g, "<br />")}</p>
+          <p>${safeMessage}</p>
         </div>
       `,
     });
 
-    return NextResponse.json({ success: true });
+    if (error) {
+      console.error("Resend send error", error);
+      return NextResponse.json(
+        { error: "Could not send your message. Please try again." },
+        { status: 502 },
+      );
+    }
+
+    return NextResponse.json({ success: true, id: data?.id });
   } catch (error) {
     console.error("Contact form error", error);
     return NextResponse.json(

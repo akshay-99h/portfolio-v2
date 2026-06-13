@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import * as React from "react";
 
 import { BrandWordmark } from "@/components/layout/brand-wordmark";
+import { SoundToggle } from "@/components/layout/sound-toggle";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -91,6 +92,7 @@ function Header() {
               />
               Accepting briefs
             </span>
+            <SoundToggle />
             <ThemeToggle />
             <Button asChild size="sm" className="px-4">
               <Link href="/contact">Contact</Link>
@@ -128,6 +130,7 @@ function Header() {
               ))}
             </div>
             <div className="mt-4 flex items-center gap-2">
+              <SoundToggle />
               <ThemeToggle />
               <Button asChild className="w-full px-4">
                 <Link href="/contact" onClick={() => setIsOpen(false)}>
