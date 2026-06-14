@@ -9,6 +9,7 @@ import { BrandWordmark } from "@/components/layout/brand-wordmark";
 import { SoundToggle } from "@/components/layout/sound-toggle";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { Button } from "@/components/ui/button";
+import { lockScroll, unlockScroll } from "@/lib/scroll-lock";
 import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
@@ -51,13 +52,46 @@ function Header() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Close the mobile menu whenever the route changes.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: close on every navigation
+  React.useEffect(() => {
+    setIsOpen(false);
+  }, [pathname]);
+
+  // While the menu is open: freeze the page and let Escape close it.
+  React.useEffect(() => {
+    if (!isOpen) {
+      return;
+    }
+
+    lockScroll();
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsOpen(false);
+      }
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+      unlockScroll();
+    };
+  }, [isOpen]);
+
   return (
     <header
       className={cn(
         "sticky top-0 z-50 border-b border-border/80 bg-background/95 px-4 backdrop-blur-sm transition-transform duration-300 sm:px-6",
         isHidden && !isOpen ? "-translate-y-full" : "translate-y-0",
       )}
-      style={{ transitionTimingFunction: "var(--ease-out-strong)" }}
+      style={
+        {
+          "--header-h": "4.25rem",
+          transitionTimingFunction: "var(--ease-out-strong)",
+        } as React.CSSProperties
+      }
     >
       <div className="mx-auto w-full max-w-[1320px]">
         <div className="flex items-center justify-between gap-4 py-3.5">
@@ -111,7 +145,10 @@ function Header() {
         </div>
 
         {isOpen ? (
-          <div className="border-t border-border pb-4 md:hidden">
+          <div
+            data-lenis-prevent
+            className="max-h-[calc(100dvh-var(--header-h))] overflow-y-auto overscroll-contain border-t border-border pb-[max(1rem,env(safe-area-inset-bottom))] md:hidden"
+          >
             <div className="flex flex-col pt-2">
               {NAV_ITEMS.map((item) => (
                 <Link
@@ -119,7 +156,7 @@ function Header() {
                   href={item.href}
                   onClick={() => setIsOpen(false)}
                   className={cn(
-                    "border-b border-border/60 py-3 text-lg tracking-tight transition-colors",
+                    "border-b border-border/60 py-3.5 text-lg tracking-tight transition-colors",
                     pathname === item.href
                       ? "text-foreground"
                       : "text-foreground/75 hover:text-foreground",

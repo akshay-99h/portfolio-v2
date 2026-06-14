@@ -38,6 +38,7 @@ export const metadata: Metadata = {
   },
   description: SITE_DESCRIPTION,
   applicationName: SITE_NAME,
+  alternates: { canonical: "/" },
   authors: [{ name: BASICS.name, url: `${SITE_URL}/about` }],
   creator: BASICS.name,
   publisher: SITE_NAME,

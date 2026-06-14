@@ -9,7 +9,9 @@ import * as React from "react";
 
 import type { AssemblyDrivers } from "@/components/gl/scenes/hero-assembly";
 import { CubeMark } from "@/components/layout/brand-wordmark";
+import { StaticCube } from "@/components/sections/static-cube";
 import { Button } from "@/components/ui/button";
+import { useIsMobile } from "@/lib/use-is-mobile";
 import { cn } from "@/lib/utils";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -135,6 +137,7 @@ function HeroAssemblySection() {
   const viewportRef = React.useRef<HTMLDivElement>(null);
   const { resolvedTheme } = useTheme();
   const tone = resolvedTheme === "dark" ? "dark" : "light";
+  const isMobile = useIsMobile();
 
   const driversRef = React.useRef<AssemblyDrivers>({
     progress: 0,
@@ -330,13 +333,19 @@ function HeroAssemblySection() {
       {/* The object's playground is the whole viewport: a fixed canvas that
           sits behind every section. It starts seated in the hero's right
           column, then tours the page as the document scrolls. Kept outside
-          the section so the ScrollTrigger pin never affects it. */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none fixed inset-0 -z-10"
-      >
-        <HeroAssemblyCanvas drivers={driversRef} tone={tone} />
-      </div>
+          the section so the ScrollTrigger pin never affects it.
+
+          Phones get a static SVG cube in the hero column instead (see below):
+          the live tour "splatters" on small screens and taxes mobile GPUs, so
+          the canvas is mounted only once we know we're on a desktop. */}
+      {isMobile === false ? (
+        <div
+          aria-hidden="true"
+          className="pointer-events-none fixed inset-0 -z-10"
+        >
+          <HeroAssemblyCanvas drivers={driversRef} tone={tone} />
+        </div>
+      ) : null}
 
       <section ref={sectionRef} className="relative px-4 pt-5 sm:px-6 sm:pt-6">
         {/* The sheet. Everything in the hero lives on one technical drawing. */}
@@ -416,6 +425,11 @@ function HeroAssemblySection() {
               ref={viewportRef}
               className="pointer-events-none relative h-[42svh] min-h-[280px] lg:h-full lg:min-h-[480px]"
             >
+              {/* Mobile-only: the static cube stands in for the WebGL tour. */}
+              {isMobile !== false ? (
+                <StaticCube className="absolute inset-0 lg:hidden" />
+              ) : null}
+
               <div
                 data-hero-labels
                 className="absolute inset-0 hidden lg:block"
@@ -433,8 +447,11 @@ function HeroAssemblySection() {
                 ))}
               </div>
 
-              <div className="absolute inset-x-0 bottom-1 flex justify-center">
-                <p data-hero-caption className="dim-label whitespace-nowrap">
+              <div className="absolute inset-x-0 bottom-1 flex justify-center px-4">
+                <p
+                  data-hero-caption
+                  className="dim-label max-w-[18rem] text-balance text-center sm:max-w-none sm:whitespace-nowrap"
+                >
                   Twenty-seven modules, one object — drawn, then built
                 </p>
               </div>

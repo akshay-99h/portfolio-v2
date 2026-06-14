@@ -4,6 +4,9 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import * as React from "react";
 
+import { StaticCube } from "@/components/sections/static-cube";
+import { useIsMobile } from "@/lib/use-is-mobile";
+
 gsap.registerPlugin(ScrollTrigger);
 
 type CinematicInterludeProps = {
@@ -33,8 +36,15 @@ function CinematicInterlude({
 }: CinematicInterludeProps) {
   const sectionRef = React.useRef<HTMLElement>(null);
   const stageRef = React.useRef<HTMLDivElement>(null);
+  const isMobile = useIsMobile();
 
   React.useLayoutEffect(() => {
+    // Mobile uses a compact, self-contained beat (no pin, no WebGL cube),
+    // so the desktop pin/scrub timeline is skipped entirely there.
+    if (isMobile !== false) {
+      return;
+    }
+
     const section = sectionRef.current;
     const stage = stageRef.current;
     if (!section || !stage) {
@@ -87,7 +97,33 @@ function CinematicInterlude({
     );
 
     return () => mm.revert();
-  }, []);
+  }, [isMobile]);
+
+  // --- Mobile beat: a compact, self-contained figure. No 300vh pin (the
+  // WebGL cube no longer tours on phones), so instead the static cube
+  // performs its own assemble + float right inside the frame, with the same
+  // sparse drafting-sheet type fading in on scroll.
+  if (isMobile !== false) {
+    return (
+      <section aria-label={figure} className="relative px-4 py-16 sm:px-6">
+        <div className="mx-auto w-full max-w-[1320px]">
+          <div className="reg-tick rule-x" />
+          <div className="flex items-baseline justify-between gap-x-6 pt-4">
+            <p className="section-kicker rise-in">{figure}</p>
+            {meta ? <p className="dim-label rise-in">{meta}</p> : null}
+          </div>
+
+          <div className="relative mt-8 grid place-items-center">
+            <StaticCube className="h-[44vw] max-h-[280px] w-full" />
+          </div>
+
+          <p className="dim-label rise-in mx-auto mt-8 max-w-xs text-balance text-center">
+            {caption}
+          </p>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section

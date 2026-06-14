@@ -193,7 +193,7 @@ function WorkIndexSection() {
                   {String(index + 1).padStart(2, "0")}
                 </span>
                 <span
-                  className="font-display text-[1.6rem] leading-[1.05] font-[550] tracking-[-0.03em] text-foreground/85 transition-[transform,color] duration-300 group-hover:translate-x-2 group-hover:text-foreground sm:text-[2.4rem] lg:text-[3rem]"
+                  className="font-display text-[1.35rem] leading-[1.05] font-[550] tracking-[-0.03em] text-foreground/85 transition-[transform,color] duration-300 group-hover:translate-x-2 group-hover:text-foreground sm:text-[2.4rem] lg:text-[3rem]"
                   style={{ transitionTimingFunction: "var(--ease-out-strong)" }}
                 >
                   {project.name}
