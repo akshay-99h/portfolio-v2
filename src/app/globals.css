@@ -208,6 +208,12 @@
   .lenis.lenis-stopped {
     overflow: hidden;
   }
+  /* Freezes the page behind the mobile nav (covers native + reduced-motion). */
+  html.scroll-locked,
+  html.scroll-locked body {
+    overflow: hidden;
+    touch-action: none;
+  }
   h1,
   h2,
   h3,
@@ -398,6 +404,31 @@
     display: block;
     will-change: transform;
   }
+
+  /* --- Static cube (mobile WebGL stand-in) --------------------------------
+     Three flat isometric faces that draw in on load, then float gently.
+     Each face has its own entrance delay so the cube reads as "assembling"
+     rather than appearing all at once. */
+  .static-cube__glyph {
+    animation: static-cube-float 6s var(--ease-in-out-strong) infinite;
+  }
+  .static-cube__envelope {
+    animation: static-cube-envelope 1.1s ease-out both;
+  }
+  .static-cube__face {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: static-cube-face 0.85s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+  .static-cube__face--left {
+    animation-delay: 0.12s;
+  }
+  .static-cube__face--right {
+    animation-delay: 0.24s;
+  }
+  .static-cube__face--top {
+    animation-delay: 0.36s;
+  }
 }
 
 @keyframes rise-in {
@@ -433,6 +464,29 @@
   }
   to {
     transform: scaleX(1);
+  }
+}
+
+@keyframes static-cube-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2.5%);
+  }
+}
+
+@keyframes static-cube-face {
+  from {
+    opacity: 0;
+    transform: translateY(10%) scale(0.92);
+  }
+}
+
+@keyframes static-cube-envelope {
+  from {
+    opacity: 0;
   }
 }
 

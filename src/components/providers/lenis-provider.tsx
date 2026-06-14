@@ -5,6 +5,8 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
 import * as React from "react";
 
+import { registerScrollController } from "@/lib/scroll-lock";
+
 gsap.registerPlugin(ScrollTrigger);
 
 type LenisProviderProps = {
@@ -23,7 +25,13 @@ function LenisProvider({ children }: LenisProviderProps) {
     ).matches;
 
     if (prefersReducedMotion) {
-      return;
+      // Native scroll stays untouched, but the mobile nav still needs a way
+      // to stop/start page scroll, handled by the <html> overflow toggle.
+      registerScrollController({
+        stop: () => {},
+        start: () => {},
+      });
+      return () => registerScrollController(null);
     }
 
     const lenis = new Lenis({
@@ -33,6 +41,11 @@ function LenisProvider({ children }: LenisProviderProps) {
 
     lenis.on("scroll", ScrollTrigger.update);
 
+    registerScrollController({
+      stop: () => lenis.stop(),
+      start: () => lenis.start(),
+    });
+
     const update = (time: number) => {
       lenis.raf(time * 1000);
     };
@@ -41,6 +54,7 @@ function LenisProvider({ children }: LenisProviderProps) {
     gsap.ticker.lagSmoothing(0);
 
     return () => {
+      registerScrollController(null);
       gsap.ticker.remove(update);
       lenis.destroy();
     };
