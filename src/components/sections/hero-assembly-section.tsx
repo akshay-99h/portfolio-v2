@@ -452,7 +452,7 @@ function HeroAssemblySection() {
                   data-hero-caption
                   className="dim-label max-w-[18rem] text-balance text-center sm:max-w-none sm:whitespace-nowrap"
                 >
-                  Twenty-seven modules, one object — drawn, then built
+                  One team, end to end — designed, then built
                 </p>
               </div>
             </div>

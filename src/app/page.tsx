@@ -30,9 +30,9 @@ export default function Home() {
 
         {/* Fig. 02a — the object takes the empty stage and reassembles. */}
         <CinematicInterlude
-          figure="Fig. 02a — Reassembly"
-          caption="The object breaks to its modules and rebuilds — twenty-seven parts, one form."
-          meta="Full sheet — no annotations"
+          figure="Fig. 02a — One object"
+          caption="Many parts, one team, one finished product — owned end to end."
+          meta="Akxost Studio"
         />
 
         <MethodSection />
@@ -41,9 +41,9 @@ export default function Home() {
 
         {/* Fig. 03a — the object recedes to scale, then re-forms. */}
         <CinematicInterlude
-          figure="Fig. 03a — To scale"
-          caption="Held at distance, the whole system reads at once — then draws back in."
-          meta="28.6139° N — 77.2090° E"
+          figure="Fig. 03a — At scale"
+          caption="Built to hold up — from the first release to the systems still running today."
+          meta="New Delhi, India"
         />
 
         <FieldNotesSection />

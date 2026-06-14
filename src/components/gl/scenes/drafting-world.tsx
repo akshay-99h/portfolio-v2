@@ -421,7 +421,7 @@ function DimensionSet({ drivers, tone }: DraftingWorldProps) {
       </group>
 
       <DimLabel
-        text="27 MODULES"
+        text="ONE TEAM"
         position={[0, 0.76, 0]}
         color={palette.signal}
         opacityRef={opacity}
