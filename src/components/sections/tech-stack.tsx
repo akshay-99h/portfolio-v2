@@ -183,7 +183,7 @@ function TechStackSection() {
           <div className="rule-x reg-tick" />
           <div className="flex flex-wrap items-end justify-between gap-x-10 gap-y-8 pt-10">
             <h2 className="display-section max-w-xl">
-              Hand it off. Get a drawing back.
+              Hand it off. Get a product back.
             </h2>
             <div className="flex flex-wrap gap-3 pb-1">
               <Button asChild>
