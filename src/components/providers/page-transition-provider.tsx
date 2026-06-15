@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 import { usePathname, useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 import * as React from "react";
@@ -175,12 +175,17 @@ function PageTransitionProvider({ children }: PageTransitionProviderProps) {
   const pendingRouteRef = React.useRef<string | null>(null);
   const pendingThemeRef = React.useRef<"light" | "dark" | null>(null);
   const clearTimerRef = React.useRef<number | null>(null);
+  const revealFallbackRef = React.useRef<number | null>(null);
   const activeRef = React.useRef(false);
 
   const clearTransition = React.useCallback(() => {
     activeRef.current = false;
     pendingRouteRef.current = null;
     pendingThemeRef.current = null;
+    if (revealFallbackRef.current) {
+      window.clearTimeout(revealFallbackRef.current);
+      revealFallbackRef.current = null;
+    }
     setTransition(null);
   }, []);
 
@@ -261,6 +266,10 @@ function PageTransitionProvider({ children }: PageTransitionProviderProps) {
 
   React.useEffect(() => {
     function handleDocumentClick(event: MouseEvent) {
+      if (window.matchMedia("(pointer: coarse)").matches) {
+        return;
+      }
+
       if (prefersReducedMotion || activeRef.current) {
         return;
       }
@@ -334,6 +343,16 @@ function PageTransitionProvider({ children }: PageTransitionProviderProps) {
             : currentTransition,
         );
         router.push(href);
+
+        if (revealFallbackRef.current) {
+          window.clearTimeout(revealFallbackRef.current);
+        }
+
+        // If app-router navigation is interrupted, clear the overlay so touch
+        // devices and Safari don't get stranded under a dead transition shell.
+        revealFallbackRef.current = window.setTimeout(() => {
+          beginReveal();
+        }, 1800);
       }, COVER_DURATION_MS);
     }
 
@@ -341,12 +360,15 @@ function PageTransitionProvider({ children }: PageTransitionProviderProps) {
     return () => {
       document.removeEventListener("click", handleDocumentClick, true);
     };
-  }, [prefersReducedMotion, resolvedTheme, router]);
+  }, [beginReveal, prefersReducedMotion, resolvedTheme, router]);
 
   React.useEffect(() => {
     return () => {
       if (clearTimerRef.current) {
         window.clearTimeout(clearTimerRef.current);
+      }
+      if (revealFallbackRef.current) {
+        window.clearTimeout(revealFallbackRef.current);
       }
     };
   }, []);
@@ -354,14 +376,7 @@ function PageTransitionProvider({ children }: PageTransitionProviderProps) {
   return (
     <PageTransitionContext.Provider value={{ transitionTheme }}>
       {children}
-      <AnimatePresence initial={false}>
-        {transition ? (
-          <DropTransitionOverlay
-            key={transition.kind}
-            transition={transition}
-          />
-        ) : null}
-      </AnimatePresence>
+      {transition ? <DropTransitionOverlay transition={transition} /> : null}
     </PageTransitionContext.Provider>
   );
 }

@@ -114,7 +114,10 @@ function CinematicInterlude({
           </div>
 
           <div className="relative mt-8 grid place-items-center">
-            <StaticCube className="h-[44vw] max-h-[280px] w-full" />
+            <StaticCube
+              className="h-[44vw] max-h-[280px] w-full"
+              variant="interlude"
+            />
           </div>
 
           <p className="dim-label rise-in mx-auto mt-8 max-w-xs text-balance text-center">

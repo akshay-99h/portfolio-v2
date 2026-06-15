@@ -427,7 +427,10 @@ function HeroAssemblySection() {
             >
               {/* Mobile-only: the static cube stands in for the WebGL tour. */}
               {isMobile !== false ? (
-                <StaticCube className="absolute inset-0 lg:hidden" />
+                <StaticCube
+                  className="absolute inset-0 lg:hidden"
+                  variant="hero"
+                />
               ) : null}
 
               <div
