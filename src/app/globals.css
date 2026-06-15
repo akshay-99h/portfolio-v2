@@ -409,11 +409,54 @@
      Three flat isometric faces that draw in on load, then float gently.
      Each face has its own entrance delay so the cube reads as "assembling"
      rather than appearing all at once. */
+  .static-cube__rig {
+    animation: static-cube-tour 11.5s var(--ease-in-out-strong) infinite;
+    transform-origin: 50% 54%;
+    will-change: transform;
+  }
   .static-cube__glyph {
-    animation: static-cube-float 6s var(--ease-in-out-strong) infinite;
+    animation:
+      static-cube-float 5.8s var(--ease-in-out-strong) infinite,
+      static-cube-spin 11.5s cubic-bezier(0.32, 0, 0.16, 1) infinite;
+    filter: drop-shadow(
+      0 18px 28px color-mix(in srgb, var(--signal) 14%, transparent)
+    );
   }
   .static-cube__envelope {
     animation: static-cube-envelope 1.1s ease-out both;
+  }
+  .static-cube__shadow {
+    background: radial-gradient(
+      circle,
+      color-mix(in srgb, var(--signal) 14%, transparent) 0%,
+      transparent 72%
+    );
+    animation: static-cube-shadow 5.8s var(--ease-in-out-strong) infinite;
+    filter: blur(10px);
+  }
+  .static-cube__halo {
+    background: radial-gradient(
+      circle,
+      color-mix(in srgb, var(--signal) 20%, transparent) 0%,
+      transparent 72%
+    );
+    animation: static-cube-halo 7.2s ease-in-out infinite;
+    filter: blur(18px);
+    opacity: 0.45;
+  }
+  .static-cube__particle {
+    background: color-mix(in srgb, var(--signal) 82%, white 18%);
+    box-shadow: 0 0 18px color-mix(in srgb, var(--signal) 42%, transparent);
+    opacity: 0.52;
+  }
+  .static-cube__particle--one {
+    animation: static-cube-particle-one 6.8s ease-in-out infinite;
+  }
+  .static-cube__particle--two {
+    animation: static-cube-particle-two 7.6s ease-in-out infinite;
+  }
+  .static-cube__particle--three {
+    animation: static-cube-particle-three 6.2s ease-in-out infinite;
   }
   .static-cube__face {
     transform-box: fill-box;
@@ -473,7 +516,33 @@
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-2.5%);
+    transform: translateY(-3.5%);
+  }
+}
+
+@keyframes static-cube-tour {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(-4deg) scale(1);
+  }
+  25% {
+    transform: translate3d(1.5%, -2%, 0) rotate(2.5deg) scale(1.015);
+  }
+  50% {
+    transform: translate3d(0.5%, -4%, 0) rotate(5deg) scale(1.03);
+  }
+  75% {
+    transform: translate3d(-1.8%, -1.5%, 0) rotate(-1deg) scale(1.01);
+  }
+}
+
+@keyframes static-cube-spin {
+  0%,
+  100% {
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    transform: rotate(-6deg) scale(1.02);
   }
 }
 
@@ -487,6 +556,66 @@
 @keyframes static-cube-envelope {
   from {
     opacity: 0;
+  }
+}
+
+@keyframes static-cube-shadow {
+  0%,
+  100% {
+    transform: scaleX(0.88);
+    opacity: 0.22;
+  }
+  50% {
+    transform: scaleX(1.02);
+    opacity: 0.34;
+  }
+}
+
+@keyframes static-cube-halo {
+  0%,
+  100% {
+    transform: scale(0.8);
+    opacity: 0.24;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.4;
+  }
+}
+
+@keyframes static-cube-particle-one {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0.34;
+  }
+  50% {
+    transform: translate3d(12px, -14px, 0);
+    opacity: 0.72;
+  }
+}
+
+@keyframes static-cube-particle-two {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translate3d(-10px, 10px, 0);
+    opacity: 0.62;
+  }
+}
+
+@keyframes static-cube-particle-three {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0.28;
+  }
+  50% {
+    transform: translate3d(-8px, -10px, 0);
+    opacity: 0.54;
   }
 }
 
