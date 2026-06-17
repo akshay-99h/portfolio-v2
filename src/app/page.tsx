@@ -33,6 +33,22 @@ export default function Home() {
           figure="Fig. 02a — One object"
           caption="Many parts, one team, one finished product — owned end to end."
           meta="Akxost Studio"
+          overlay={{
+            chapter: "Creation phase",
+            leftTitle: "From billet to form",
+            leftLines: [
+              "Raw material chosen",
+              "Modules cut to tolerance",
+              "Edges indexed before lift",
+            ],
+            rightTitle: "What the forge decides",
+            rightLines: [
+              "Heat reveals weak joins",
+              "Pressure aligns the stack",
+              "Signal face lands last",
+            ],
+            footer: "Not decoration. A system taking shape under constraint.",
+          }}
         />
 
         <MethodSection />
@@ -44,6 +60,22 @@ export default function Home() {
           figure="Fig. 03a — At scale"
           caption="Built to hold up — from the first release to the systems still running today."
           meta="New Delhi, India"
+          overlay={{
+            chapter: "Forging phase",
+            leftTitle: "After assembly",
+            leftLines: [
+              "Load introduced gradually",
+              "Surfaces tempered in use",
+              "Fit checked under stress",
+            ],
+            rightTitle: "What remains",
+            rightLines: [
+              "Quiet internals",
+              "Predictable movement",
+              "Enough strength to keep shipping",
+            ],
+            footer: "The object recedes. The discipline stays behind in the system.",
+          }}
         />
 
         <FieldNotesSection />

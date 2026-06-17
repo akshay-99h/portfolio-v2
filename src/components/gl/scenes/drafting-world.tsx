@@ -420,7 +420,7 @@ function DimensionSet({ drivers, tone }: DraftingWorldProps) {
         />
       </group>
 
-      <DimLabel
+      {/*<DimLabel
         text="ONE TEAM"
         position={[0, 0.76, 0]}
         color={palette.signal}
@@ -437,7 +437,7 @@ function DimensionSet({ drivers, tone }: DraftingWorldProps) {
         position={[0, -0.76, 0]}
         color={palette.ink}
         opacityRef={opacity}
-      />
+      />*/}
     </group>
   );
 }

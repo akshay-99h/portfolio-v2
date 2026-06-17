@@ -16,6 +16,14 @@ type CinematicInterludeProps = {
   caption: string;
   /** Right-aligned coordinate / status line. */
   meta?: string;
+  overlay?: {
+    chapter: string;
+    leftTitle: string;
+    leftLines: readonly string[];
+    rightTitle: string;
+    rightLines: readonly string[];
+    footer: string;
+  };
 };
 
 /**
@@ -33,6 +41,7 @@ function CinematicInterlude({
   figure,
   caption,
   meta,
+  overlay,
 }: CinematicInterludeProps) {
   const sectionRef = React.useRef<HTMLElement>(null);
   const stageRef = React.useRef<HTMLDivElement>(null);
@@ -118,11 +127,41 @@ function CinematicInterlude({
               className="h-[44vw] max-h-[280px] w-full"
               variant="interlude"
             />
+            {overlay ? (
+              <>
+                <div className="interlude-overlay interlude-overlay--top rise-in">
+                  <p className="interlude-overlay__eyebrow">{overlay.chapter}</p>
+                </div>
+
+                <div className="interlude-overlay interlude-overlay--left rise-in">
+                  <p className="interlude-overlay__title">{overlay.leftTitle}</p>
+                  <ul className="interlude-overlay__list">
+                    {overlay.leftLines.map((line) => (
+                      <li key={line}>{line}</li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="interlude-overlay interlude-overlay--right rise-in">
+                  <p className="interlude-overlay__title">{overlay.rightTitle}</p>
+                  <ul className="interlude-overlay__list">
+                    {overlay.rightLines.map((line) => (
+                      <li key={line}>{line}</li>
+                    ))}
+                  </ul>
+                </div>
+              </>
+            ) : null}
           </div>
 
           <p className="dim-label rise-in mx-auto mt-8 max-w-xs text-balance text-center">
             {caption}
           </p>
+          {overlay ? (
+            <p className="interlude-overlay__footer rise-in mx-auto mt-5 max-w-sm text-center">
+              {overlay.footer}
+            </p>
+          ) : null}
         </div>
       </section>
     );
@@ -148,6 +187,42 @@ function CinematicInterlude({
             </p>
           ) : null}
         </div>
+
+        {overlay ? (
+          <>
+            <div className="mx-auto grid w-full max-w-[1320px] flex-1 grid-cols-[minmax(0,15rem)_1fr_minmax(0,15rem)] items-center gap-6 py-12">
+              <div
+                data-interlude-fade
+                className="interlude-overlay interlude-overlay--desktop interlude-overlay--desktop-left hidden lg:block"
+              >
+                <p className="interlude-overlay__eyebrow">{overlay.chapter}</p>
+                <p className="interlude-overlay__title">{overlay.leftTitle}</p>
+                <ul className="interlude-overlay__list">
+                  {overlay.leftLines.map((line) => (
+                    <li key={line}>{line}</li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="hidden lg:block" />
+
+              <div
+                data-interlude-fade
+                className="interlude-overlay interlude-overlay--desktop interlude-overlay--desktop-right hidden lg:block"
+              >
+                <p className="interlude-overlay__title">{overlay.rightTitle}</p>
+                <ul className="interlude-overlay__list">
+                  {overlay.rightLines.map((line) => (
+                    <li key={line}>{line}</li>
+                  ))}
+                </ul>
+                <p className="interlude-overlay__footer mt-5">{overlay.footer}</p>
+              </div>
+            </div>
+          </>
+        ) : (
+          <div className="flex-1" />
+        )}
 
         <div className="mx-auto w-full max-w-[1320px]">
           <p
