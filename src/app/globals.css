@@ -395,6 +395,110 @@
     animation: rise-in 0.66s cubic-bezier(0.2, 0.7, 0.2, 1) both;
   }
 
+  .interlude-overlay {
+    border: 1px solid color-mix(in srgb, var(--border) 82%, transparent);
+    background:
+      linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--background) 84%, transparent),
+        color-mix(in srgb, var(--background) 68%, transparent)
+      );
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--foreground) 4%, transparent) inset,
+      0 16px 36px color-mix(in srgb, var(--background) 24%, transparent);
+    backdrop-filter: blur(10px);
+  }
+
+  .interlude-overlay--desktop {
+    padding: 1rem 1rem 1.05rem;
+  }
+
+  .interlude-overlay--desktop-left {
+    justify-self: start;
+    align-self: start;
+    margin-top: 5vh;
+  }
+
+  .interlude-overlay--desktop-right {
+    justify-self: end;
+    align-self: end;
+    margin-bottom: 5vh;
+  }
+
+  .interlude-overlay--top,
+  .interlude-overlay--left,
+  .interlude-overlay--right {
+    position: absolute;
+    z-index: 1;
+  }
+
+  .interlude-overlay--top {
+    left: 50%;
+    top: 0;
+    min-width: 10rem;
+    padding: 0.5rem 0.85rem 0.55rem;
+    transform: translateX(-50%);
+  }
+
+  .interlude-overlay--left {
+    left: 0;
+    top: 22%;
+    width: min(11.5rem, 34vw);
+    padding: 0.85rem 0.9rem 0.9rem;
+  }
+
+  .interlude-overlay--right {
+    right: 0;
+    bottom: 12%;
+    width: min(11.5rem, 34vw);
+    padding: 0.85rem 0.9rem 0.9rem;
+  }
+
+  .interlude-overlay__eyebrow {
+    color: var(--signal);
+    font-family: var(--font-jetbrains-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    line-height: 1.4;
+    text-transform: uppercase;
+  }
+
+  .interlude-overlay__title {
+    margin-top: 0.5rem;
+    color: color-mix(in srgb, var(--foreground) 92%, var(--background));
+    font-family: var(--font-switzer);
+    font-size: 0.88rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+
+  .interlude-overlay__list {
+    margin-top: 0.65rem;
+    display: grid;
+    gap: 0.42rem;
+    color: color-mix(in srgb, var(--foreground) 62%, var(--background));
+    font-family: var(--font-jetbrains-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    line-height: 1.5;
+    text-transform: uppercase;
+  }
+
+  .interlude-overlay__list li::before {
+    content: "· ";
+    color: color-mix(in srgb, var(--signal) 78%, var(--foreground));
+  }
+
+  .interlude-overlay__footer {
+    color: color-mix(in srgb, var(--foreground) 52%, var(--background));
+    font-family: var(--font-jetbrains-mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.14em;
+    line-height: 1.6;
+    text-transform: uppercase;
+  }
+
   /* Masked line reveal for display type. */
   .line-mask {
     display: block;
@@ -625,5 +729,17 @@
     animation-iteration-count: 1;
     transition-duration: 0.01ms;
     scroll-behavior: auto;
+  }
+}
+
+@media (max-width: 639px) {
+  .interlude-overlay--left,
+  .interlude-overlay--right {
+    width: min(10rem, 42vw);
+  }
+
+  .interlude-overlay__list {
+    gap: 0.34rem;
+    font-size: 0.62rem;
   }
 }
