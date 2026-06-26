@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
 import { CinematicInterlude } from "@/components/sections/cinematic-interlude";
+import { CubeMiniGameSection } from "@/components/sections/cube-mini-game-section";
 import { FieldNotesSection } from "@/components/sections/field-notes-section";
 import { HeroAssemblySection } from "@/components/sections/hero-assembly-section";
 import { MethodSection } from "@/components/sections/method-section";
@@ -54,6 +55,8 @@ export default function Home() {
         <MethodSection />
 
         <WorkIndexSection />
+
+        <CubeMiniGameSection />
 
         {/* Fig. 03a — the object recedes to scale, then re-forms. */}
         <CinematicInterlude
