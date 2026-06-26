@@ -1,6 +1,6 @@
 "use client";
 
-import { RoundedBox } from "@react-three/drei";
+import { Environment, Lightformer, RoundedBox } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 import * as React from "react";
 import * as THREE from "three";
@@ -124,6 +124,11 @@ const PALETTES: Record<
     clayRoughness: number;
     clayMetalness: number;
     signalRoughness: number;
+    signalMetalness: number;
+    clayEnvIntensity: number;
+    signalEnvIntensity: number;
+    clearcoat: number;
+    clearcoatRoughness: number;
     /** Rim-fill light tint. */
     rim: string;
   }
@@ -133,19 +138,29 @@ const PALETTES: Record<
     signal: "#2aa49d",
     edge: "#131310",
     edgeOpacity: 0.5,
-    clayRoughness: 0.4,
-    clayMetalness: 0.3,
-    signalRoughness: 0.32,
+    clayRoughness: 0.22,
+    clayMetalness: 0.7,
+    signalRoughness: 0.18,
+    signalMetalness: 0.84,
+    clayEnvIntensity: 0.9,
+    signalEnvIntensity: 1.25,
+    clearcoat: 0.52,
+    clearcoatRoughness: 0.2,
     rim: "#fdf4e0",
   },
   dark: {
-    clay: ["#3a3f38", "#30352f", "#474c44"],
+    clay: ["#9aa0a6", "#858c93", "#b1b7bd"],
     signal: "#2dbab4",
     edge: "#e8e5de",
     edgeOpacity: 0.65,
-    clayRoughness: 0.38,
-    clayMetalness: 0.45,
-    signalRoughness: 0.3,
+    clayRoughness: 0.2,
+    clayMetalness: 0.78,
+    signalRoughness: 0.16,
+    signalMetalness: 0.9,
+    clayEnvIntensity: 0.95,
+    signalEnvIntensity: 1.35,
+    clearcoat: 0.58,
+    clearcoatRoughness: 0.16,
     rim: "#bfeae6",
   },
 };
@@ -581,6 +596,35 @@ function HeroAssemblyObject({
 
   return (
     <>
+      {/* Reflection rig: bright strips above and to the side create readable
+          light sweeps across the metallic faces without adding visible props. */}
+      <Environment resolution={128}>
+        <group rotation={[0, -Math.PI / 4, 0]}>
+          <Lightformer
+            form="rect"
+            intensity={tone === "dark" ? 1.7 : 1.45}
+            color={tone === "dark" ? "#f4efe2" : "#fffaf0"}
+            position={[0, 3.6, 5.4]}
+            scale={[6.4, 0.9, 1]}
+          />
+          <Lightformer
+            form="rect"
+            intensity={tone === "dark" ? 1.15 : 0.95}
+            color={palette.rim}
+            position={[-4.4, 1.1, 3.2]}
+            rotation={[0, Math.PI / 3.5, 0]}
+            scale={[3.8, 4.2, 1]}
+          />
+          <Lightformer
+            form="ring"
+            intensity={tone === "dark" ? 0.7 : 0.55}
+            color={palette.signal}
+            position={[2.2, -1.5, 2.8]}
+            rotation={[Math.PI / 2.7, 0, 0]}
+            scale={2.6}
+          />
+        </group>
+      </Environment>
       <ambientLight intensity={tone === "dark" ? 0.55 : 0.85} />
       <directionalLight
         position={[4, 6, 3]}
@@ -626,7 +670,7 @@ function HeroAssemblyObject({
                 handleDown(i);
               }}
             >
-              <meshStandardMaterial
+              <meshPhysicalMaterial
                 ref={registerSolid}
                 color={
                   voxel.id === "signal"
@@ -638,7 +682,19 @@ function HeroAssemblyObject({
                     ? palette.signalRoughness
                     : palette.clayRoughness
                 }
-                metalness={palette.clayMetalness}
+                metalness={
+                  voxel.id === "signal"
+                    ? palette.signalMetalness
+                    : palette.clayMetalness
+                }
+                envMapIntensity={
+                  voxel.id === "signal"
+                    ? palette.signalEnvIntensity
+                    : palette.clayEnvIntensity
+                }
+                clearcoat={palette.clearcoat}
+                clearcoatRoughness={palette.clearcoatRoughness}
+                reflectivity={0.9}
                 transparent
                 opacity={0}
               />

@@ -9,11 +9,11 @@ import type {
 
 export const BASICS: Basics = {
   name: "Akshay Prabhat Mishra",
-  title: "Founder, Akxost Studio",
+  title: "Independent Full-Stack Developer",
   location: "New Delhi, India",
-  experienceLevel: "Agency Founder & Full-Stack Engineer",
+  experienceLevel: "Full-Stack Developer",
   summary:
-    "Akxost Studio is a product engineering agency for teams that need one partner to scope, build, launch, and improve digital products. The work spans product strategy, full-stack web and mobile development, backend systems, deployment, and post-launch iteration.",
+    "I build web apps, mobile products, backend systems, and internal tools. Akxost is where I collect the products I have shipped, the systems I have maintained, and the way I approach building software that holds up in production.",
   contact: {
     email: "akshayprabhatmishra@gmail.com",
     github: "https://github.com/akshay-99h",
@@ -53,12 +53,12 @@ export const TECH_STACK: TechStack = {
 
 export const EXPERIENCE: Experience = {
   summary:
-    "Built and shipped software for lifestyle brands, community platforms, and internal operations. Through Akxost Studio, I handle discovery, architecture, implementation, deployment, and the operational work required after launch.",
+    "I have built and shipped software for lifestyle brands, community platforms, internal operations, and product experiments. Most of my work stays close to the build itself: shaping scope, writing the application code, shipping releases, and fixing what only shows up after launch.",
   highlights: [
-    "Scoped greenfield builds and technical rebuilds for product teams",
-    "Built and maintained production APIs, app backends, and admin workflows",
-    "Shipped mobile and web products from first release through iteration",
-    "Handled cloud infrastructure, deployment pipelines, and runtime stability",
+    "Built greenfield products and rebuilt fragile codebases",
+    "Shipped production APIs, app backends, dashboards, and internal workflows",
+    "Handled deployment, cloud infrastructure, and runtime debugging",
+    "Stayed with products after launch to iterate, simplify, and stabilize",
   ],
 };
 
@@ -87,11 +87,11 @@ export const INTERESTS: Interests = {
 };
 
 export const PORTFOLIO_META: PortfolioMeta = {
-  availability: "Taking select client projects via Akxost Studio",
+  availability: "Open to collaborations, side projects, and interesting builds",
   preferredWork: [
-    "Fractional product engineering partnerships",
-    "MVP to production web and mobile delivery",
-    "Backend-heavy systems that need reliable execution",
+    "Collaborative web and mobile products",
+    "Backend-heavy tools, automations, and internal systems",
+    "Games, experiments, and technically interesting side projects",
   ],
   lastUpdated: "2026-02-17",
 };

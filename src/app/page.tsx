@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
 import { CinematicInterlude } from "@/components/sections/cinematic-interlude";
+import { CubeMiniGameSection } from "@/components/sections/cube-mini-game-section";
 import { FieldNotesSection } from "@/components/sections/field-notes-section";
 import { HeroAssemblySection } from "@/components/sections/hero-assembly-section";
 import { MethodSection } from "@/components/sections/method-section";
@@ -31,8 +32,8 @@ export default function Home() {
         {/* Fig. 02a — the object takes the empty stage and reassembles. */}
         <CinematicInterlude
           figure="Fig. 02a — One object"
-          caption="Many parts, one team, one finished product — owned end to end."
-          meta="Akxost Studio"
+          caption="Many parts, one developer, one finished product — carried end to end."
+          meta="Akxost"
           overlay={{
             chapter: "Creation phase",
             leftTitle: "From billet to form",
@@ -54,6 +55,8 @@ export default function Home() {
         <MethodSection />
 
         <WorkIndexSection />
+
+        <CubeMiniGameSection />
 
         {/* Fig. 03a — the object recedes to scale, then re-forms. */}
         <CinematicInterlude
@@ -80,15 +83,15 @@ export default function Home() {
 
         <FieldNotesSection />
 
-        {/* Fig. 04 — New brief */}
+        {/* Fig. 04 — Contact */}
         <section
           className="px-4 pt-24 sm:px-6 sm:pt-32"
-          aria-label="Start a new brief"
+          aria-label="Start a conversation"
         >
           <div className="mx-auto w-full max-w-[1320px]">
             <div className="rule-x reg-tick" />
             <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2 pt-4">
-              <p className="section-kicker">Fig. 04 — New brief</p>
+              <p className="section-kicker">Fig. 04 — Contact</p>
               <p className="dim-label hidden sm:block">
                 Reply within two working days
               </p>
@@ -127,7 +130,7 @@ export default function Home() {
 
               <div className="flex flex-wrap gap-3 pb-1">
                 <Button asChild>
-                  <Link href="/contact">Start a brief</Link>
+                  <Link href="/contact">Start a conversation</Link>
                 </Button>
                 <Button asChild variant="outline">
                   <Link href={`mailto:${BASICS.contact.email}`}>Email</Link>

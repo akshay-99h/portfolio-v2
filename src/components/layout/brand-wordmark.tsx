@@ -46,7 +46,7 @@ function BrandWordmark({
       </span>
       {withTagline ? (
         <span className="dim-label mt-[0.55em] block pl-[0.08em] text-[0.26em] tracking-[0.42em]">
-          Product Engineering Studio
+          Developer Portfolio
         </span>
       ) : null}
     </span>

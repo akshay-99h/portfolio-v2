@@ -5,14 +5,14 @@ import { Header } from "@/components/layout/header";
 import { ProjectsSection } from "@/components/sections/projects";
 
 const DESCRIPTION =
-  "The full Akxost Studio work index — mobile products, public platforms, operational web systems, and browser games, each drawn from its real entry page.";
+  "The full Akxost work index — mobile products, public platforms, operational web systems, and browser games, each drawn from its real entry page.";
 
 export const metadata: Metadata = {
   title: "Work",
   description: DESCRIPTION,
   alternates: { canonical: "/projects" },
   openGraph: {
-    title: "Work index — Akxost Studio",
+    title: "Work index — Akxost",
     description: DESCRIPTION,
     url: "/projects",
   },

@@ -83,7 +83,7 @@ function RegistrationStamp({ className }: { className?: string }) {
           letterSpacing="2.4"
         >
           <textPath href="#hero-stamp-arc" textLength="294">
-            Akxost Studio - New Delhi - Drawn, then built -
+            Akxost - New Delhi - Drawn, then built -
           </textPath>
         </text>
         <circle
@@ -229,7 +229,7 @@ function HeroAssemblySection() {
         <CropMarks />
 
         <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-border/70 px-4 py-3 sm:px-6">
-          <p className="section-kicker">Product Engineering Studio</p>
+          <p className="section-kicker">Developer Portfolio</p>
           <p className="dim-label hidden md:block">28.6139deg N - 77.2090deg E</p>
           <p className="dim-label">Sheet 01 / 04</p>
         </div>
@@ -238,7 +238,7 @@ function HeroAssemblySection() {
           <div>
             <h1 className="display-hero text-foreground">
               <span className="line-mask">
-                <span>We build</span>
+                <span>I build</span>
               </span>
               <span className="line-mask lg:pl-[7%]">
                 <span>products that</span>
@@ -259,19 +259,19 @@ function HeroAssemblySection() {
             <div className="ruler-x mt-10 origin-left lg:mt-12 lg:max-w-[88%]" />
 
             <p className="section-copy mt-9 max-w-md text-base sm:text-lg">
-              Strategy, design, engineering, and launch support. One senior
-              team carries the product from first drawing to dependable
-              release.
+              Web apps, mobile products, backend systems, and internal tools.
+              I like taking an idea from rough scope to something dependable in
+              production.
             </p>
             <div className="mt-7 flex flex-wrap items-center gap-6">
               <Button asChild size="lg" className="px-7">
-                <Link href="/contact">Start a project</Link>
+                <Link href="/contact">Want to work together?</Link>
               </Button>
               <Link
                 href="/projects"
                 className="dim-label text-foreground/80 transition-colors hover:text-foreground"
               >
-                Recent work -&gt;
+                Selected work -&gt;
               </Link>
             </div>
           </div>
@@ -301,7 +301,7 @@ function HeroAssemblySection() {
 
             <div className="absolute inset-x-0 bottom-1 flex justify-center px-4">
               <p className="dim-label max-w-[18rem] text-balance text-center sm:max-w-none sm:whitespace-nowrap">
-                One team, end to end - designed, then built
+                One developer, end to end - planned, built, shipped
               </p>
             </div>
           </div>
@@ -316,7 +316,7 @@ function HeroAssemblySection() {
         </div>
 
         <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-t border-border/70 px-4 py-3 sm:px-6">
-          <span className="dim-label">Senior-led delivery</span>
+          <span className="dim-label">Built by one developer</span>
           <span className="dim-label hidden lg:inline-flex lg:items-baseline lg:gap-2">
             Built to ship, not to stall
           </span>
