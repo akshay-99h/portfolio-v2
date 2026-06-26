@@ -9,6 +9,6 @@ export default function OpengraphImage() {
   return renderOgImage({
     sheet: "Sheet 01 / Index",
     headline: "Products that survive contact with reality.",
-    note: "Product engineering agency — scope, build, launch, iterate.",
+    note: "Full-stack developer portfolio — scope, build, launch, iterate.",
   });
 }

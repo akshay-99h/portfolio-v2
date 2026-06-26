@@ -21,12 +21,12 @@ export interface TechCategory {
 
 export const CLIENT_CAPABILITY_GROUPS: CapabilityGroup[] = [
   {
-    name: "Customer-facing products",
+    name: "Products people use",
     summary:
       "Web apps, mobile products, dashboards, portals, and content-backed platforms that need to feel credible and stay maintainable.",
     examples: [
       "Marketing sites with real product depth",
-      "Client or member portals",
+      "User and member portals",
       "Dashboards and admin panels",
       "Mobile-first product surfaces",
     ],
@@ -45,7 +45,7 @@ export const CLIENT_CAPABILITY_GROUPS: CapabilityGroup[] = [
   {
     name: "Internal tools and workflow software",
     summary:
-      "Systems that replace manual coordination, spreadsheets, and patchwork processes for teams that need better operational control.",
+      "Systems that replace manual coordination, spreadsheets, and patchwork processes with something easier to run.",
     examples: [
       "Approval and review workflows",
       "Ops dashboards",

@@ -98,7 +98,7 @@ function ThemeSpotlightLogo({
       >
         <Image
           src={baseLogo}
-          alt="Akxost Studio"
+          alt="Akxost"
           fill
           priority={priority}
           sizes="(max-width: 640px) 220px, 280px"

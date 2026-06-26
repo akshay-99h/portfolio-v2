@@ -17,7 +17,7 @@ const MUTED = "rgba(232,229,222,0.6)";
 const SUBTLE = "rgba(232,229,222,0.78)";
 
 type SheetProps = {
-  /** Top-right sheet marker, e.g. "Sheet 02 / Agency". */
+  /** Top-right sheet marker, e.g. "Sheet 02 / About". */
   sheet: string;
   /** Small eyebrow above the headline, e.g. "Capabilities". */
   eyebrow?: string;
@@ -71,7 +71,7 @@ export function renderOgImage({
           textTransform: "uppercase",
         }}
       >
-        <span style={{ color: SIGNAL }}>Akxost Studio</span>
+        <span style={{ color: SIGNAL }}>Akxost</span>
         <span style={{ color: MUTED }}>{sheet}</span>
       </div>
 

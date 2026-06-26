@@ -5,9 +5,9 @@ import { StudioClock } from "@/components/layout/studio-clock";
 import { BASICS } from "@/lib/data/resume";
 
 const FOOTER_LINKS = [
-  { href: "/about", label: "Agency" },
+  { href: "/about", label: "About" },
   { href: "/projects", label: "Work" },
-  { href: "/tech", label: "Capabilities" },
+  { href: "/tech", label: "Tech" },
   { href: "/blog", label: "Writing" },
   { href: "/contact", label: "Contact" },
 ] as const;
@@ -30,8 +30,8 @@ function Footer() {
               growing.
             </h2>
             <p className="section-copy max-w-md text-sm sm:text-base">
-              Akxost Studio builds web and mobile systems with clear
-              architecture, restrained scope, and delivery that stays
+              Akxost is my portfolio for web and mobile systems built with
+              clear architecture, restrained scope, and delivery that stays
               maintainable long after launch.
             </p>
           </section>
@@ -67,7 +67,7 @@ function Footer() {
         <div className="rule-x mt-12" />
         <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 pt-4">
           <p className="dim-label">
-            © {new Date().getFullYear()} Akxost Studio
+            © {new Date().getFullYear()} Akxost
           </p>
           <p className="dim-label hidden sm:block">
             Set in Switzer &amp; JetBrains Mono · Next.js · React · WebGL

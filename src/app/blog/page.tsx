@@ -8,14 +8,14 @@ import { SectionContainer } from "@/components/layout/section-container";
 import { getAllPosts } from "@/lib/blog/posts";
 
 const DESCRIPTION =
-  "Notes from the agency side of building software — product delivery, architecture decisions, and the engineering tradeoffs that come up in client work.";
+  "Notes from building software — architecture decisions, debugging, delivery tradeoffs, and the practical work behind shipped products.";
 
 export const metadata: Metadata = {
   title: "Writing",
   description: DESCRIPTION,
   alternates: { canonical: "/blog" },
   openGraph: {
-    title: "Writing — Akxost Studio",
+    title: "Writing — Akxost",
     description: DESCRIPTION,
     url: "/blog",
   },
@@ -31,11 +31,11 @@ export default function BlogPage() {
         <div className="max-w-3xl">
           <p className="section-kicker">Blog</p>
           <h1 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
-            Notes from the agency side of building software
+            Notes from building software
           </h1>
           <p className="section-copy mt-4 text-sm sm:text-base">
-            Short writing on product delivery, architecture decisions, and the
-            engineering tradeoffs that come up in client work.
+            Short writing on architecture decisions, debugging, delivery
+            tradeoffs, and the engineering work behind shipped software.
           </p>
         </div>
 

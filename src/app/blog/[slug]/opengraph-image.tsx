@@ -1,7 +1,7 @@
 import { getAllPosts, getPostBySlug } from "@/lib/blog/posts";
 import { OG_CONTENT_TYPE, OG_SIZE, renderOgImage } from "@/lib/og";
 
-export const alt = "Akxost Studio — Writing";
+export const alt = "Akxost — Writing";
 export const size = OG_SIZE;
 export const contentType = OG_CONTENT_TYPE;
 
@@ -31,8 +31,8 @@ export default async function OpengraphImage({ params }: Props) {
     return renderOgImage({
       sheet: "Sheet 05 / Writing",
       eyebrow: "Writing",
-      headline: "Notes from the agency side.",
-      note: "Product delivery, architecture decisions, and the tradeoffs of client work.",
+      headline: "Notes from the build side.",
+      note: "Architecture decisions, debugging, delivery tradeoffs, and practical engineering work.",
     });
   }
 

@@ -44,15 +44,15 @@ export const metadata: Metadata = {
   publisher: SITE_NAME,
   category: "technology",
   keywords: [
-    "product engineering agency",
-    "full-stack development agency",
-    "Next.js development",
-    "React development agency",
-    "mobile app development",
+    "full-stack developer portfolio",
+    "full-stack developer",
+    "Next.js developer",
+    "React developer",
+    "mobile app developer",
     "backend systems",
-    "MVP development",
-    "fractional product engineering",
-    "software agency New Delhi",
+    "software engineer portfolio",
+    "web developer New Delhi",
+    "software developer India",
     "Akxost",
   ],
   openGraph: {
@@ -83,31 +83,21 @@ export const metadata: Metadata = {
   },
 };
 
-/** Organization + WebSite graph for rich results. */
-const ORGANIZATION_JSON_LD = {
+/** Person + WebSite graph for a personal portfolio. */
+const PERSON_JSON_LD = {
   "@context": "https://schema.org",
   "@graph": [
     {
-      "@type": "Organization",
-      "@id": `${SITE_URL}/#organization`,
-      name: SITE_NAME,
+      "@type": "Person",
+      "@id": `${SITE_URL}/#person`,
+      name: BASICS.name,
       url: SITE_URL,
       description: SITE_DESCRIPTION,
       email: BASICS.contact.email,
-      address: {
-        "@type": "PostalAddress",
-        addressLocality: "New Delhi",
-        addressCountry: "IN",
-      },
-      founder: {
-        "@type": "Person",
-        name: BASICS.name,
-        jobTitle: BASICS.title,
-        sameAs: [
-          BASICS.contact.github,
-          BASICS.contact.linkedin,
-          BASICS.contact.twitter,
-        ],
+      jobTitle: BASICS.title,
+      homeLocation: {
+        "@type": "Place",
+        name: BASICS.location,
       },
       sameAs: [
         BASICS.contact.github,
@@ -120,7 +110,9 @@ const ORGANIZATION_JSON_LD = {
       "@id": `${SITE_URL}/#website`,
       url: SITE_URL,
       name: SITE_NAME,
-      publisher: { "@id": `${SITE_URL}/#organization` },
+      description: SITE_DESCRIPTION,
+      about: { "@id": `${SITE_URL}/#person` },
+      publisher: { "@id": `${SITE_URL}/#person` },
     },
   ],
 };
@@ -148,7 +140,7 @@ export default function RootLayout({
           type="application/ld+json"
           // biome-ignore lint/security/noDangerouslySetInnerHtml: static JSON-LD built from local data
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify(ORGANIZATION_JSON_LD),
+            __html: JSON.stringify(PERSON_JSON_LD),
           }}
         />
         <ThemeProvider>

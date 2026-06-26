@@ -76,11 +76,12 @@ function ContactSection() {
       <div className="max-w-3xl">
         <p className="section-kicker">Contact</p>
         <h1 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
-          Tell us what needs to ship.
+          Want to work together?
         </h1>
         <p className="section-copy mt-4 text-sm sm:text-base">
-          Share the product, timeline, current stage, and where delivery is
-          getting blocked. I use that to decide fit, scope, and next steps.
+          If you are building something interesting, exploring a collaboration,
+          or want another builder in the room, send it over. Products, games,
+          tools, and odd technical experiments are all fair game.
         </p>
       </div>
 
@@ -119,7 +120,7 @@ function ContactSection() {
             <span className="section-kicker">Message</span>
             <textarea
               className={`${fieldClass} min-h-[180px]`}
-              placeholder="Product stage, goals, current blockers, timeline, and any technical constraints."
+              placeholder="What you are making, where you want help, timeline, and any technical constraints."
               value={formState.message}
               onChange={(event) =>
                 handleFieldChange("message", event.target.value)
@@ -143,9 +144,9 @@ function ContactSection() {
           <div>
             <p className="section-kicker">Direct</p>
             <p className="mt-3 text-sm leading-7 text-muted-foreground">
-              Akxost Studio works with founders, operators, and small teams that
-              need direct product engineering ownership from planning through
-              launch.
+              I am not using this site as a full-time job board. It is mainly
+              here for collaborations, side projects, game-adjacent ideas, and
+              conversations with people building thoughtful things.
             </p>
           </div>
 

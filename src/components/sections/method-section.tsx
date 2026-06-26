@@ -19,7 +19,7 @@ const STATIONS = [
     id: "drawing",
     numeral: "02",
     stage: "Drawing",
-    title: "One drawing, one team.",
+    title: "One drawing, one builder.",
     note: "Interface, systems, deployment, and post-launch support stay on the same sheet instead of being split across handoffs.",
     outputs: ["Interface system", "Architecture plan", "Data model"],
   },
@@ -114,7 +114,7 @@ function MethodSection() {
     <section
       ref={sectionRef}
       className="px-4 pt-24 pb-10 sm:px-6 sm:pt-32"
-      aria-label="How the studio works"
+      aria-label="How I work"
     >
       <div className="mx-auto w-full max-w-[1320px]">
         <div className="rule-x reg-tick" />
@@ -125,11 +125,11 @@ function MethodSection() {
 
         <div className="grid gap-x-16 gap-y-6 pt-12 lg:grid-cols-[1fr_auto] lg:items-end lg:pt-16">
           <h2 className="display-section max-w-2xl">
-            Four stations, one drawing.
+            Four stations, one build.
           </h2>
           <p className="section-copy max-w-xs pb-1 text-sm sm:text-base">
-            Every project crosses the same span. The same team carries it the
-            whole way.
+            Most projects cross the same span. I try to keep the thinking and
+            the implementation close together the whole way.
           </p>
         </div>
 

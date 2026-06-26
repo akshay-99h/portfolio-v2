@@ -13,14 +13,14 @@ import {
 } from "@/lib/data/resume";
 
 const DESCRIPTION =
-  "Akxost Studio is a small product engineering agency in New Delhi built around direct execution — discovery, architecture, implementation, deployment, and post-launch iteration from one desk.";
+  "Akshay Prabhat Mishra is a full-stack developer in New Delhi who builds web products, mobile apps, backend systems, and internal tools from first version to stable release.";
 
 export const metadata: Metadata = {
-  title: "Agency",
+  title: "About",
   description: DESCRIPTION,
   alternates: { canonical: "/about" },
   openGraph: {
-    title: "The agency — Akxost Studio",
+    title: "About — Akxost",
     description: DESCRIPTION,
     url: "/about",
   },
@@ -35,7 +35,7 @@ export default function AboutPage() {
           {/* Sheet header */}
           <div className="rule-x reg-tick" />
           <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2 pt-4">
-            <p className="section-kicker">Dossier — The agency</p>
+            <p className="section-kicker">Dossier — About</p>
             <p className="dim-label hidden sm:block">
               Last surveyed {PORTFOLIO_META.lastUpdated}
             </p>
@@ -43,7 +43,7 @@ export default function AboutPage() {
 
           <div className="max-w-3xl pt-10 lg:pt-14">
             <h1 className="display-section">
-              A small agency built around direct execution.
+              A developer who likes building things end to end.
             </h1>
             <div className="ruler-x mt-6 max-w-md" />
             <p className="section-copy mt-6 max-w-xl text-sm sm:text-base">
@@ -54,7 +54,7 @@ export default function AboutPage() {
           {/* Title block — like the corner of a drawing sheet. */}
           <div className="mt-12 grid border border-border sm:grid-cols-2 lg:mt-16 lg:grid-cols-4">
             <div className="border-b border-border p-5 sm:border-r lg:border-b-0">
-              <p className="dim-label text-[0.6rem]">Principal</p>
+              <p className="dim-label text-[0.6rem]">Developer</p>
               <p className="mt-2 text-sm font-medium">{BASICS.name}</p>
               <p className="mt-1 text-sm text-muted-foreground">
                 {BASICS.title}
@@ -160,10 +160,10 @@ export default function AboutPage() {
                   How engagements run
                 </h2>
                 <p className="mt-4 max-w-[44ch] text-sm leading-7 text-muted-foreground">
-                  Set up for founders and teams that need more than a developer
-                  for hire — discovery, product planning, implementation,
-                  backend architecture, and the release work required to get a
-                  product into production.
+                  Best fit when a founder or team needs a hands-on developer
+                  who can move from product thinking to implementation, backend
+                  architecture, release work, and post-launch fixes without
+                  treating them as separate jobs.
                 </p>
               </div>
               <div className="self-start lg:w-full lg:max-w-md lg:justify-self-end">
@@ -202,7 +202,7 @@ export default function AboutPage() {
                   Off the clock, still shipping
                 </h2>
                 <p className="mt-4 max-w-[44ch] text-sm leading-7 text-muted-foreground">
-                  {COMMUNITY.involvement[0]}. The studio stays close to the
+                  {COMMUNITY.involvement[0]}. The work stays close to the
                   developer community it came from.
                 </p>
               </div>
@@ -243,7 +243,7 @@ export default function AboutPage() {
                 </h2>
                 <p className="mt-4 max-w-[44ch] text-sm leading-7 text-muted-foreground">
                   The interests that decide which side projects get built — and
-                  which client problems feel like side projects.
+                  which product problems are too interesting to ignore.
                 </p>
               </div>
               <div className="self-start space-y-6 lg:w-full lg:max-w-md lg:justify-self-end">
@@ -287,11 +287,11 @@ export default function AboutPage() {
             <div className="rule-x reg-tick" />
             <div className="flex flex-wrap items-end justify-between gap-x-10 gap-y-8 pt-10">
               <h2 className="display-section max-w-xl">
-                Compact team. End-to-end scope.
+                Open to collaborations with people building interesting things.
               </h2>
               <div className="flex flex-wrap gap-3 pb-1">
                 <Button asChild>
-                  <Link href="/contact">Start a project</Link>
+                  <Link href="/contact">Want to work together?</Link>
                 </Button>
                 <Button asChild variant="outline">
                   <Link href="/projects">View work</Link>

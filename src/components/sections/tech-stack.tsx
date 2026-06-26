@@ -29,32 +29,32 @@ function TechStackSection() {
         {/* Sheet header */}
         <div className="rule-x reg-tick" />
         <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2 pt-4">
-          <p className="section-kicker">Spec. 01 — Capabilities</p>
+          <p className="section-kicker">Spec. 01 — What I build</p>
           <p className="dim-label hidden sm:block">
-            Outcomes first, tools second
+            Problems first, stack second
           </p>
         </div>
 
         <div className="max-w-3xl pt-10 lg:pt-14">
           <h1 className="display-section">
-            What a client can actually hand off.
+            What I usually build.
           </h1>
           <div className="ruler-x mt-6 max-w-md" />
           <p className="section-copy mt-6 max-w-xl text-sm sm:text-base">
-            Start with the outcome, not the tools. These are the areas where the
-            studio takes direct ownership — from customer-facing products to the
-            backend and operational systems behind them.
+            Start with the product or the bottleneck, not the tools. These are
+            the kinds of systems I spend most of my time building, followed by
+            the stack I usually reach for.
           </p>
         </div>
 
         {/* Sheet metrics */}
         <div className="mt-10 grid grid-cols-3 gap-x-6 border-y border-border py-5 sm:max-w-xl lg:mt-14">
           {[
-            [String(totalBuilds).padStart(2, "0"), "Builds in the index"],
+            [String(totalBuilds).padStart(2, "0"), "Projects in the index"],
             [String(liveBuilds).padStart(2, "0"), "Live right now"],
             [
               String(CLIENT_CAPABILITY_GROUPS.length).padStart(2, "0"),
-              "Areas of ownership",
+              "Build categories",
             ],
           ].map(([value, label]) => (
             <div key={label}>
@@ -93,7 +93,7 @@ function TechStackSection() {
                   {group.summary}
                 </p>
                 <div className="mt-5 flex flex-wrap items-baseline gap-x-2 gap-y-1">
-                  <span className="dim-label text-[0.6rem]">Drawn from</span>
+                  <span className="dim-label text-[0.6rem]">Seen in</span>
                   {CAPABILITY_PROOF[index]?.map((proof) => (
                     <Link
                       key={proof}
@@ -183,11 +183,11 @@ function TechStackSection() {
           <div className="rule-x reg-tick" />
           <div className="flex flex-wrap items-end justify-between gap-x-10 gap-y-8 pt-10">
             <h2 className="display-section max-w-xl">
-              Hand it off. Get a product back.
+              If the idea is interesting, I am open to collaborating.
             </h2>
             <div className="flex flex-wrap gap-3 pb-1">
               <Button asChild>
-                <Link href="/contact">Start a brief</Link>
+                <Link href="/contact">Collaborate</Link>
               </Button>
               <Button asChild variant="outline">
                 <Link href="/projects">See the work</Link>

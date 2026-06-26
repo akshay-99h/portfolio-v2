@@ -13,9 +13,9 @@ import { lockScroll, unlockScroll } from "@/lib/scroll-lock";
 import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
-  { href: "/about", label: "Agency" },
+  { href: "/about", label: "About" },
   { href: "/projects", label: "Work" },
-  { href: "/tech", label: "Capabilities" },
+  { href: "/tech", label: "Tech" },
   { href: "/blog", label: "Writing" },
 ];
 
@@ -124,7 +124,7 @@ function Header() {
                 aria-hidden="true"
                 className="size-1.5 rounded-full bg-signal"
               />
-              Accepting briefs
+              Open to collaborations
             </span>
             <SoundToggle />
             <ThemeToggle />

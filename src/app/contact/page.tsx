@@ -5,14 +5,14 @@ import { Header } from "@/components/layout/header";
 import { ContactSection } from "@/components/sections/contact";
 
 const DESCRIPTION =
-  "Start a brief with Akxost Studio. Describe the product that needs to exist, the bottleneck that will not move, or the system that keeps breaking — replies within two working days.";
+  "Open to collaborations around products, games, tools, and technically interesting builds. Describe what you are making or exploring — replies within two working days.";
 
 export const metadata: Metadata = {
   title: "Contact",
   description: DESCRIPTION,
   alternates: { canonical: "/contact" },
   openGraph: {
-    title: "Start a brief — Akxost Studio",
+    title: "Collaborate — Akxost",
     description: DESCRIPTION,
     url: "/contact",
   },
